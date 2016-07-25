@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "556125316879",
+    "project_id": "firebase-zoome"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:556125316879:android:3e7525e2dc88baa3",
+        "android_client_info": {
+          "package_name": "com.zoome"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "556125316879-itdkosut525gsirm4haupe0usbojhi4i.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.zoome",
+            "certificate_hash": "474EED82748639B24FC5106AD57E941F6C64F3EC"
+          }
+        },
+        {
+          "client_id": "556125316879-agbj14itl42ir0qnk4ecntr9di1v3jkd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBad0oLjiEm8TJwQ2PIma97jLhT3tD_aAI"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
