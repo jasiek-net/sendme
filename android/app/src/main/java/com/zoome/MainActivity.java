@@ -1,6 +1,7 @@
 package com.zoome;
 
 import com.facebook.react.ReactActivity;
+import com.RNFetchBlob.RNFetchBlobPackage;
 import co.apptailor.googlesignin.RNGoogleSigninPackage;
 import com.facebook.reactnative.androidsdk.FBSDKPackage;
 
@@ -23,3 +24,5 @@ public class MainActivity extends ReactActivity {
         return "zoome";
     }
 }
+
+
