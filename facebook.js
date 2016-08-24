@@ -9,6 +9,7 @@ import {
 } from 'react-native-fbsdk';
 
 import {
+  Alert,
   AppRegistry,
   StyleSheet,
   Text,
@@ -21,7 +22,7 @@ import {
 } from 'react-native';
 
 import gg from './android/app/google-services.json';
-import {API} from './global';
+import {API, COL} from './global';
 
 import {encode} from 'base-64'
 import Keychain from 'react-native-keychain';
@@ -36,8 +37,9 @@ export default class Facebook extends Component {
     this.img = props.user.picture.data.url;
     this.username = props.user.name;
     // Cool stuff! https://facebook.github.io/react/docs/reusable-components.html#es6-classes
+    this.user = this.user.bind(this);
     this.friends = this.friends.bind(this);
-    this.user = this.user.bind(this)
+    this.logout = this.logout.bind(this);
   }
 
   friends() {
@@ -54,9 +56,9 @@ export default class Facebook extends Component {
             var friends = res.data.map(a => {
               return {
                 name: a.name,
-                foot: '',
+                foot: a.id,
                 add: false,
-                img: a.picture.url,
+                img: a.picture.data.url,
                 id: a.id
               }
             });
@@ -74,22 +76,41 @@ export default class Facebook extends Component {
 
   }
 
+  logout() {
+    var that = this;
+    Alert.alert(
+      'Facebook log out',
+      'Do you want to log out from your facebook account?',
+      [
+        {text: 'Yes', onPress: () => { LoginManager.logOut(); that.props.navigator.pop() }},
+        {text: 'No'}
+      ]
+    )
+  }
+
   render() {
     return (
       <View style={styles.container}>
-        <Image
-          source={{uri: this.img}}
-          resizeMode='contain'
-          style={{width: 100, height: 100}} />
-        <Text>{this.username}</Text>
-        <TouchableHighlight onPress={this.friends} style={styles.button}>
-          <Text>
+        <View style={styles.user}>
+          <Image
+            source={{uri: this.img}}
+            resizeMode='contain'
+            style={styles.userImg} />
+          <Text style={styles.userName}>{this.username}</Text>
+        </View>
+        <TouchableHighlight onPress={this.user} style={styles.btn}>
+          <Text style={styles.btnHead}>
+            YOUR PROFILE
+          </Text>
+        </TouchableHighlight>
+        <TouchableHighlight onPress={this.friends} style={styles.btn}>
+          <Text style={styles.btnHead}>
             FRIENDS
           </Text>
         </TouchableHighlight>
-        <TouchableHighlight onPress={this.user} style={styles.button}>
-          <Text>
-            YOUR PROFILE
+        <TouchableHighlight onPress={this.logout} style={styles.btn}>
+          <Text style={styles.btnHead}>
+            LOG OUT
           </Text>
         </TouchableHighlight>
       </View>
@@ -97,28 +118,40 @@ export default class Facebook extends Component {
   }
 }
 
-
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    backgroundColor: COL.bg,
+  },
+  user: {
+    flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  button: {
+    height: 70,
     padding: 10,
-    backgroundColor: 'green',
-    marginBottom: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: COL.brd_sml,
   },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
+  userImg: {
+    height: 50,
+    width: 50,
+    borderRadius: 25,
+    marginRight: 10,
+  },
+  userName: {
+    fontSize: 20,
+    color: COL.btn_foot,
+  },
+  btn: {
+    backgroundColor: COL.btn_bg,
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: COL.brd_sml,
+  },
+  btnHead: {
+    color: COL.btn_head,
+    fontSize: 20,
+  },
+  btnFoot: {
+    color: COL.btn_foot,
   },
 });

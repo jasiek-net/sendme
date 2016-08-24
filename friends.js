@@ -28,6 +28,7 @@ import {encode} from 'base-64'
 import Keychain from 'react-native-keychain';
 import RNFetchBlob from 'react-native-fetch-blob';
 
+import {API, COL} from './global';
 
 export default class Friends extends Component {
 
@@ -94,7 +95,8 @@ export default class Friends extends Component {
         }
       }
       console.log('AsyncStorage ', JSON.stringify(data));
-      AsyncStorage.setItem(that.props.type, JSON.stringify(data));
+      AsyncStorage.setItem(that.props.type, JSON.stringify(data))
+      .catch(err => console.log('AsyncStorage error ', err));
 
       var friends = this.state.friends.slice();
       friends[rowId].add = !friends[rowId].add;
@@ -114,36 +116,37 @@ export default class Friends extends Component {
     var id = rowData.id;
     return (
         <View style={styles.row}>
-          <Image style={styles.thumb} source={{uri: img}} />
-          <View style={styles.container}>
-            <View style={styles.name_info}>
-              <Text style={styles.name}>
-                {name === '' ? 'No Name' : name}
-              </Text>
-              <Text style={styles.name}>
-                {foot}
-              </Text>
-            </View>
+          <Image style={styles.img} source={{uri: img}} />
+          <View style={styles.info}>
+            <Text style={styles.head} numberOfLines={1}>
+              {name === '' ? 'No Name' : name}
+            </Text>
+            <Text style={styles.foot}>
+              {foot}
+            </Text>
           </View>
           <TouchableHighlight onPress={this.pressRow.bind(this, id, rowId)}>
-          <View style={styles.button}>
-            {add ? 
-              <Text style={styles.button_remove}>
-                REMOVE{'\n'}USER!
+          {add ?
+            <View style={[styles.btn, styles.unfollowBtn]}>
+              <Text style={styles.unfollowTxt}>
+                UNFOLLOW
               </Text>
-            :
-              <Text style={styles.button_add}>
-                ADD USER!
+            </View>
+          :
+            <View style={[styles.btn, styles.followBtn]}>
+              <Text style={styles.followTxt}>
+                FOLLOW
               </Text>
-            }
-          </View>
+            </View>
+          }
           </TouchableHighlight>
         </View>);
   }
 
   render() {
     return (
-      <ListView 
+      <ListView
+        style={styles.list}
         dataSource={this.state.dataSource}
         renderRow={this.renderRow}
         enableEmptySections={true}
@@ -152,44 +155,57 @@ export default class Friends extends Component {
   }
 }
 
-
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
+  list: {
+    backgroundColor: COL.bg,
+  },
   row: {
     flexDirection: 'row',
-    justifyContent: 'center',
-    backgroundColor: '#F6F6F6',
-  },
-  thumb: {
-    width: 64,
-    height: 64,
-  },
-  name: {
-    flex: 1,
-    fontSize: 15,
-  },
-  add: {
-// fontSize
-    flex: 1,
-  },
-  container: {
-    flexDirection: 'row',
-    flex: 1,
-    paddingLeft: 10,
-  },
-  user_info: {
-    flex: 1,
-    paddingTop: 10,
-  },
-  button: {
-    flex: 1,
-    justifyContent: 'center',
     alignItems: 'center',
-    width: 100,
+    height: 70,
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: COL.brd_sml,
+    backgroundColor: COL.bg,
   },
-  button_add: {
-    color: 'green',
+  cont: {
+    flexDirection: 'row',
   },
-  button_remove: {
-    color: 'red',
+  img: {
+    height: 50,
+    width: 50,
+    borderRadius: 25,
+  },
+  info: {
+    flexDirection: 'column',
+    paddingLeft: 10,
+    paddingRight: 10,
+    flex: 1,
+  },
+  head: {
+    fontSize: 20,
+    color: COL.btn_head,
+  },
+  foot: {
+    color: COL.btn_foot,
+  },
+  btn: {
+    borderWidth: 1,
+    padding: 3,
+    paddingLeft: 5,
+    paddingRight: 5,
+    borderRadius: 3,
+  },
+  followBtn: {
+    borderColor: COL.btn_head,
+  },
+  followTxt: {
+    color: COL.btn_head,
+  },
+  unfollowBtn: {
+    backgroundColor: COL.btn_foot,
+  },
+  unfollowTxt: {
+    color: COL.btn_bg,
   },
 });

@@ -10,6 +10,7 @@ import {
 
 import {
   AppRegistry,
+  Alert,
   StyleSheet,
   Text,
   IntentAndroid,
@@ -75,10 +76,11 @@ export default class Emails extends Component {
       } else {
         emails = JSON.parse(res);
         console.log('Before setState ', emails);
+
         that.setState({
           empty: false,
           emails: emails,
-          dataSource: that.state.dataSource.cloneWithRows(that.state.emails)
+          dataSource: that.state.dataSource.cloneWithRows(emails)
         });
       }
       console.log('componentDidMount setState ', that.state.emails)
@@ -89,7 +91,7 @@ export default class Emails extends Component {
 
   }
 
-  removeMail(id) {
+  removeEmail(id) {
     var that = this;
     AsyncStorage.getItem('emails')
     .then(res => {
@@ -98,32 +100,30 @@ export default class Emails extends Component {
       console.log('AsyncStorage ', JSON.stringify(emails));
       AsyncStorage.setItem('emails', JSON.stringify(emails));
 
-      this.setState({emails});
+      that.setState({
+        emails: emails,
+        dataSource: that.state.dataSource.cloneWithRows(emails)
+      });
     })
     .catch(err => console.log('AsyncStorage error', err));
   }
 
-  renderRow(rowData, sectionId, rowId, highlightRow) {
-    console.log('Render row: ' + rowData);
-    return (
-      <View style={styles.row}>
-        <View style={styles.name_info}>
-          <Text style={styles.name}>
-            {rowData.id}
-          </Text>
-        </View>
-        <TouchableHighlight onPress={this.removeMail.bind(this, rowId)}>
-          <Text style={styles.button_remove}>
-            REMOVE{'\n'}USER!
-          </Text>
-        </TouchableHighlight>
-      </View>);
+  clickRemove(id, email) {
+    var that = this;
+    Alert.alert(
+      'Remove email: ' + email,
+      'Are you shure you whant to remove ' + email + ' from your receiver list?',
+      [
+        {text: 'Cancel', style: 'cancel'},
+        {text: 'Remove', onPress: that.removeEmail.bind(that, id)}
+      ]
+    )
   }
+
 
 // TODO: add email validation (onChange event)
   addEmail() {
     var that = this;
-    AsyncStorage.setItem('emails', null);
     AsyncStorage.getItem('emails')
     .then(res => {
       var emails = JSON.parse(res);
@@ -131,7 +131,8 @@ export default class Emails extends Component {
       that.setState({
         modal: false,
         empty: false,
-        emails: emails
+        emails: emails,
+        dataSource: that.state.dataSource.cloneWithRows(emails)
       });
       console.log('SetItem: ', emails)
       AsyncStorage.setItem('emails', JSON.stringify(emails));
@@ -143,6 +144,21 @@ export default class Emails extends Component {
     this.setState({modal: true})
   }
 
+  renderRow(rowData, sectionId, rowId, highlightRow) {
+    console.log('Render row: ' + rowData);
+    return (
+      <View style={styles.row}>
+        <Text style={styles.email}>
+          {rowData.id}
+        </Text>
+        <TouchableHighlight onPress={this.clickRemove.bind(this, rowId, rowData.id)} style={styles.removeButton}>
+          <Text style={styles.removeText}>
+            REMOVE
+          </Text>
+        </TouchableHighlight>
+      </View>);
+  }
+
   render() {
     return (
       <View style={styles.container}>
@@ -152,21 +168,16 @@ export default class Emails extends Component {
           visible={this.state.modal}
           onRequestClose={() => {alert("Modal has been closed.")}}
           >
-          <View>
-            <Text style={styles.instructions}>Enter e-maill address that will recieve photos</Text>
-            <TextInput onChangeText={(email) => this.setState({email})} />
-            <TouchableHighlight onPress={this.addEmail} style={styles.button}>
-              <Text>
-                Add new email address
+          <View style={styles.container}>
+            <Text style={styles.addText}>Enter e-maill address</Text>
+            <TextInput style={styles.input} onChangeText={(email) => this.setState({email})} />
+            <TouchableHighlight onPress={this.addEmail}>
+              <Text style={styles.addText}>
+                ADD
               </Text>
             </TouchableHighlight>
           </View>
         </Modal>
-        <TouchableHighlight onPress={this.clickAdd} style={styles.button}>
-          <Text>
-            Add new email address
-          </Text>
-        </TouchableHighlight>      
         {
           this.state.empty ?
           <Text style={styles.welcome}>Your email list is empty</Text>
@@ -177,59 +188,55 @@ export default class Emails extends Component {
             enableEmptySections={true}
           />
         }
+        <TouchableHighlight onPress={this.clickAdd} style={styles.addButton}>
+          <Text style={styles.addText}>
+            Add new email address
+          </Text>
+        </TouchableHighlight>      
       </View>
     );
   }
 }
 
 
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5FCFF',
+    backgroundColor: COL.bg,
   },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  button: {
+  addButton: {
     padding: 10,
-    backgroundColor: 'green',
-    marginBottom: 10,
-    alignItems: 'center',
+    backgroundColor: COL.btn_bg,
+    borderTopColor: COL.brd_big,
+    borderTopWidth: 5,
   },
-  instructions: {
+  addText: {
+    color: COL.btn_head,
+    fontSize: 20,
+    textAlign: 'center'
+  },
+  input: {
+    fontSize: 20,
+    color: COL.btn_foot,
     textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
   },
   row: {
     flexDirection: 'row',
-    justifyContent: 'center',
-    backgroundColor: '#F6F6F6',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    height: 50,
+    padding: 10,
+    backgroundColor: COL.btn_bg,
+    borderBottomColor: COL.brd_sml,
+    borderBottomWidth: 1,
   },
-  thumb: {
-    width: 64,
-    height: 64,
+  email: {
+    color: COL.btn_head,
+    fontSize: 20,
   },
-  name: {
-    flex: 1,
-    fontSize: 15,
-  },
-  add: {
-// fontSize
-    flex: 1,
-  },
-  user_info: {
-    flex: 1,
-    paddingTop: 10,
-  },
-  button_add: {
-    color: 'green',
-  },
-  button_remove: {
-    color: 'red',
+  removeText: {
+    color: COL.red,
   },
 
 });

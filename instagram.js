@@ -10,6 +10,7 @@ import {
 
 import {
   AppRegistry,
+  Alert,
   StyleSheet,
   Text,
   IntentAndroid,
@@ -21,6 +22,8 @@ import {
 } from 'react-native';
 
 import gg from './android/app/google-services.json';
+
+import {API, COL} from './global';
 
 import {encode} from 'base-64'
 import Keychain from 'react-native-keychain';
@@ -35,7 +38,8 @@ export default class Instagram extends Component {
     this.username = props.user.data.full_name;
     // Cool stuff! https://facebook.github.io/react/docs/reusable-components.html#es6-classes
     this.friends = this.friends.bind(this);
-    this.user = this.user.bind(this)
+    this.user = this.user.bind(this);
+    this.logout = this.logout.bind(this);
   }
 
   friends() {
@@ -43,7 +47,7 @@ export default class Instagram extends Component {
     Keychain.getInternetCredentials('instagram')
       .then(sec => {
         var token = sec.password
-        var api = 'https://api.instagram.com/v1/users/self/follows?' + token;
+        var api = API.IN + 'users/self/follows?' + token;
         fetch(api)
           .then(res => res.json())
           .then(res => {
@@ -69,22 +73,48 @@ export default class Instagram extends Component {
 
   }
 
+  logout() {
+    var that = this;
+    Alert.alert(
+      'Instagram log out',
+      'Do you want to log out from your instagram account?',
+      [
+        {text: 'Yes', onPress: () => { 
+          Keychain.resetInternetCredentials('instagram');
+          var url = 'https://instagram.com/accounts/logout';
+          Linking.openURL(url)
+          .catch(err => console.log('Instagram: logout error ', err));
+          that.props.navigator.pop();
+          }
+        },
+        {text: 'No'}
+      ]
+    )
+  }
+
   render() {
     return (
       <View style={styles.container}>
-        <Image
-          source={{uri: this.img}}
-          resizeMode='contain'
-          style={{width: 100, height: 100}} />
-        <Text>{this.username}</Text>
-        <TouchableHighlight onPress={this.friends} style={styles.button}>
-          <Text>
+        <View style={styles.user}>
+          <Image
+            source={{uri: this.img}}
+            resizeMode='contain'
+            style={styles.userImg} />
+          <Text style={styles.userName}>{this.username}</Text>
+        </View>
+        <TouchableHighlight onPress={this.user} style={styles.btn}>
+          <Text style={styles.btnHead}>
+            YOUR PROFILE
+          </Text>
+        </TouchableHighlight>
+        <TouchableHighlight onPress={this.friends} style={styles.btn}>
+          <Text style={styles.btnHead}>
             FRIENDS
           </Text>
         </TouchableHighlight>
-        <TouchableHighlight onPress={this.user} style={styles.button}>
-          <Text>
-            YOUR PROFILE
+        <TouchableHighlight onPress={this.logout} style={styles.btn}>
+          <Text style={styles.btnHead}>
+            LOG OUT
           </Text>
         </TouchableHighlight>
       </View>
@@ -92,28 +122,40 @@ export default class Instagram extends Component {
   }
 }
 
-
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    backgroundColor: COL.bg,
+  },
+  user: {
+    flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  button: {
+    height: 70,
     padding: 10,
-    backgroundColor: 'green',
-    marginBottom: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: COL.brd_sml,
   },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
+  userImg: {
+    height: 50,
+    width: 50,
+    borderRadius: 25,
+    marginRight: 10,
+  },
+  userName: {
+    fontSize: 20,
+    color: COL.btn_foot,
+  },
+  btn: {
+    backgroundColor: COL.btn_bg,
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: COL.brd_sml,
+  },
+  btnHead: {
+    color: COL.btn_head,
+    fontSize: 20,
+  },
+  btnFoot: {
+    color: COL.btn_foot,
   },
 });

@@ -15,24 +15,31 @@ import {
 } from 'react-native-fbsdk';
 
 import {
+  Alert,
   AppRegistry,
+  AsyncStorage,
   StyleSheet,
   Text,
   IntentAndroid,
   TouchableHighlight,
   Linking,
   View,
+  ScrollView,
   Navigator,
   NativeModules,
   Image
 } from 'react-native';
 
-import {
-  MKButton,
-  MKColor,
-} from 'react-native-material-kit';
+import { setTheme, MKColor, MKButton } from 'react-native-material-kit';
 
-import {API} from './global';
+setTheme({
+  primaryColor: MKColor.Teal,
+  primaryColorRGB: MKColor.RGBPurple,
+  accentColor: MKColor.Amber,
+});
+
+
+import {API, COL} from './global';
 
 import gg from './android/app/google-services.json';
 
@@ -41,6 +48,8 @@ import Keychain from 'react-native-keychain';
 import RNFetchBlob from 'react-native-fetch-blob';
 
 import MailHelper from './mailhelper';
+
+
 
 const insta_redirect = 'insta://redirect';
 
@@ -52,6 +61,7 @@ export default class Main extends Component {
       showImg: false
     };
     this.clickInstagram = this.clickInstagram.bind(this);
+    this.clickEmail = this.clickEmail.bind(this);
   }
 
   componentDidMount() {
@@ -100,22 +110,15 @@ export default class Main extends Component {
   }
 
   printer() {
-  // console.log('Start timeout');
-  //   NativeModules.TimerModule.startTimer(5000, () => {
-  //     console.log('Timeout!!!')
-  //   });
-  // console.log('End timeout');
-//    alert(JSON.stringify(gg.client[0].api_key[0].current_key));
-
-    // this.getFB();
-    // var that = this;
-    //  AccessToken.getCurrentAccessToken().then(
-    //   (data) => {
-    //     that.acc = data;
-    //     that.getFB(that.acc.userID);
-    //     // alert('Token: ' + that.acc.userID.toString());
-    //   }
-    // );
+      AsyncStorage.getItem('facebook')
+      .then(res => {
+        if (res != null) {
+          var data = JSON.parse(res);
+          if (data.users) {
+            console.log('All users: ', data.users);
+          }
+        }
+      });
   }
 
   clickEmail() {
@@ -123,62 +126,86 @@ export default class Main extends Component {
   }
 
   render() {
-    var img
-    var imgUrl = 'https://scontent.cdninstagram.com/t51.2885-15/s640x640/sh0.08/e35/13768364_2107425766149299_897456652_n.jpg';
-    if (this.state.showImg) {
-      img = <Image
-        source={{uri: imgUrl}}
-        resizeMode='contain'
-        style={{width: 100, height: 100}} />
-    }
     return (
       <View style={styles.container}>
-        {img}
-        <Text style={styles.welcome}>
-          Welcome to React Native!
-        </Text>
-        <Text style={styles.instructions}>
-          To get started, edit index.android.js
-        </Text>
-        <Text style={styles.instructions}>
-          Double tap R on your keyboard to reload,{'\n'}
-          Shake or press menu button for dev menu
-        </Text>
-        <TouchableHighlight onPress={this.clickEmail.bind(this)} style={styles.button}>
-          <Text>
-            EMAILS
+        <View style={styles.head}>
+          <Text style={styles.welcome}>
+            Welcome to zoome!
           </Text>
-        </TouchableHighlight>
-        <TouchableHighlight onPress={this.clickFacebook.bind(this)} style={styles.button}>
-          <Text>
-            FACEBOOK
-          </Text>
-        </TouchableHighlight>
-        <TouchableHighlight onPress={this.clickInstagram} style={styles.button}>
-          <Text>
-            INSTAGRAM        
-          </Text>
-        </TouchableHighlight>
-        <TouchableHighlight onPress={this.loginGoogle.bind(this)} style={styles.button}>
-          <Text>
-            GMAL
-          </Text>
-        </TouchableHighlight>
-        <TouchableHighlight onPress={this.printer.bind(this)}>
-          <Text>
-            PRINT!
-          </Text>
-        </TouchableHighlight>
-        <TouchableHighlight onPress={MailHelper.sendPhotos}>
-          <Text>
-            Send photo!
-          </Text>
-        </TouchableHighlight>
-        <TouchableHighlight onPress={this.showCredential.bind(this)}>
-          <Text>
-            Show Credentials
-          </Text>
-        </TouchableHighlight>
+        </View>
+        <ScrollView style={styles.scroll}>
+          <TouchableHighlight onPress={this.loginGoogle.bind(this)} style={styles.menuItem}>
+            <View>
+              <Text style={styles.menuHead}>
+                GMAIL
+              </Text>
+              <Text style={styles.menuFoot}>
+                Configure your gmail account
+              </Text>
+            </View>
+          </TouchableHighlight>
+          <TouchableHighlight onPress={this.clickEmail} style={styles.menuItem}>
+            <View>
+              <Text style={styles.menuHead}>
+                EMAILS
+              </Text>
+              <Text style={styles.menuFoot}>
+                Add or remove emails from your recipients list
+              </Text>
+            </View>
+          </TouchableHighlight>
+          <TouchableHighlight onPress={this.clickFacebook.bind(this)} style={styles.menuItem}>
+            <View>
+              <Text style={styles.menuHead}>
+                FACEBOOK
+              </Text>
+              <Text style={styles.menuFoot}>
+                Configure your Facebook followers list
+              </Text>
+            </View>
+          </TouchableHighlight>
+          <TouchableHighlight onPress={this.clickInstagram} style={styles.menuItem}>
+            <View>
+              <Text style={styles.menuHead}>
+                INSTAGRAM
+              </Text>
+              <Text style={styles.menuFoot}>
+                Configure your Instagram followers list
+              </Text>
+            </View>
+          </TouchableHighlight>
+          <TouchableHighlight onPress={this.configuration} style={styles.menuItem}>
+            <View>
+              <Text style={styles.menuHead}>
+                SETTINGS
+              </Text>
+              <Text style={styles.menuFoot}>
+                Set the hours of sending images and other
+              </Text>
+            </View>
+          </TouchableHighlight>
+
+          <TouchableHighlight onPress={MailHelper.sendPhotos} style={styles.menuItem}>
+            <View>
+              <Text style={styles.menuHead}>
+                SEND PHOTOS
+              </Text>
+              <Text style={styles.menuFoot}>
+                Send photos immediatly to test the app
+              </Text>
+            </View>
+          </TouchableHighlight>
+          <TouchableHighlight onPress={this.printer.bind(this)} style={styles.menuItem}>
+            <View>
+              <Text style={styles.menuHead}>
+                PRINT
+              </Text>
+              <Text style={styles.menuFoot}>
+                Print data for debug reason
+              </Text>
+            </View>
+          </TouchableHighlight>
+        </ScrollView>
       </View>
     );
   }
@@ -204,22 +231,17 @@ export default class Main extends Component {
         var pass = user.accessToken;
         var user = user.id;
         Keychain.setInternetCredentials('google', user, pass).then(() => {
-          alert('Google: sign in success!');
+          Alert.alert(
+            'Google log out',
+            'Do you want to log out from google account?',
+            [
+              {text: 'Yes', onPress: () => {GoogleSignin.signOut()}},
+              {text: 'No'}
+            ]
+          );
         });
       })
-      .catch(err => console.log('Maine: gmail sign in error ', err));
-    });
-  }
-
-  showCredential() {
-    var service = 'google';
-//    var service = 'instagram';
-    Keychain.getInternetCredentials(service)
-    .then(function(credentials) {
-      alert('Credentials retrieved! ' + credentials.username + ' ' + credentials.password);
-    })
-    .catch(function(error) {
-      alert('Keychain couldn\'t be accessed! Maybe no value set? ' + error);
+      .catch(err => console.log('Main: gmail sign in error ', err));
     });
   }
 
@@ -248,7 +270,10 @@ export default class Main extends Component {
   clickInstagram() {
     var that = this;
     Keychain.getInternetCredentials('instagram')
-      .then((sec) => {
+    .then((sec) => {
+      if (sec === null) {
+        that.loginInstagram();
+      } else {
         fetch('https://api.instagram.com/v1/users/self/?' + sec.password)
           .then((res) => res.json())
           .then(res => {
@@ -259,37 +284,45 @@ export default class Main extends Component {
             console.log('Instagram: access token expired ', err);
             that.loginInstagram();
           })
-      })
-      .catch((err) => {
-        console.log('Instagram: no credentials ', err);
-        that.loginInstagram();
-      });
-  }
-
-
+      }
+    })
+    .catch((err) => {
+      console.log('Instagram: no credentials ', err);
+      that.loginInstagram();
+    });
+}
 
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
+    backgroundColor: COL.bg,
+  },
+  head: {
+    borderBottomColor: COL.btn_head,
+    borderBottomWidth: 1,
   },
   welcome: {
     fontSize: 20,
     textAlign: 'center',
     margin: 10,
+    color: COL.btn_head,
   },
-  button: {
+  scroll: {
+    flex: 1,
+  },
+  menuItem: {
     padding: 10,
-    backgroundColor: 'green',
-    marginBottom: 10,
+    backgroundColor: COL.btn_bg,
+    borderBottomWidth: 1,
+    borderBottomColor: COL.brd_sml,
   },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
+  menuHead: {
+    color: COL.btn_head,
+    fontSize:20,
+  },
+  menuFoot: {
+    color: COL.btn_foot,
   },
 });
