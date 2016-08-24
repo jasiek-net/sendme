@@ -126,6 +126,8 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-vector-icons')
+    compile project(':react-native-material-kit')
     compile project(':react-native-fetch-blob')
     compile project(':react-native-google-signin')
     compile project(':react-native-fbsdk')
@@ -148,3 +150,5 @@ task copyDownloadableDepsToLibs(type: Copy) {
 }
 
 apply plugin: 'com.google.gms.google-services'
+
+apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"

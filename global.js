@@ -5,6 +5,12 @@ const API = {
 	GM: ''
 }
 
+const COL = {
+	btn_txt: '#76FF03',
+	btn_bg: '#263238',
+}
+
 export {
-	API
+	API,
+	COL,
 }

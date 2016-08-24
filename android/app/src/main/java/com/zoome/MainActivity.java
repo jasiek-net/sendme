@@ -1,6 +1,8 @@
 package com.zoome;
 
 import com.facebook.react.ReactActivity;
+import com.oblador.vectoricons.VectorIconsPackage;
+import com.github.xinthink.rnmk.ReactMaterialKitPackage;
 import com.RNFetchBlob.RNFetchBlobPackage;
 import co.apptailor.googlesignin.RNGoogleSigninPackage;
 import com.facebook.reactnative.androidsdk.FBSDKPackage;

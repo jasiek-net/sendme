@@ -19,8 +19,18 @@ import {
   Navigator,
   ListView,
   AsyncStorage,
+  TextInput,
+  Modal,
   Image
 } from 'react-native';
+
+import {
+  MKButton,
+  MKColor,
+} from 'react-native-material-kit';
+
+import Icon from 'react-native-vector-icons/FontAwesome';
+
 
 import gg from './android/app/google-services.json';
 
@@ -28,6 +38,7 @@ import {encode} from 'base-64'
 import Keychain from 'react-native-keychain';
 import RNFetchBlob from 'react-native-fetch-blob';
 
+import {COL} from './global';
 
 export default class Emails extends Component {
 
@@ -37,116 +48,128 @@ export default class Emails extends Component {
  
     this.state = {
       dataSource: ds.cloneWithRows([]),
-      emails: null,
-      empty: false
+      emails: [],
+      empty: false,
+      modal: false
     }
 
     // bind methods
     this.renderRow = this.renderRow.bind(this);
+    this.clickAdd = this.clickAdd.bind(this);
+    this.addEmail = this.addEmail.bind(this);
   }
 
   componentDidMount() {
     var that = this;
+    // AsyncStorage.removeItem('emails').then(_ => {
+
+
     AsyncStorage.getItem('emails')
     .then(res => {
-      if (res === null) {
+      var emails = [];
+      if (res === null || JSON.parse(res) === []) {
         that.setState({
-          empty: true,         
-        })
+          empty: true,
+        });
+        AsyncStorage.setItem('emails', JSON.stringify([]));
       } else {
-        var emails = JSON.parse(res);
+        emails = JSON.parse(res);
+        console.log('Before setState ', emails);
         that.setState({
+          empty: false,
           emails: emails,
           dataSource: that.state.dataSource.cloneWithRows(that.state.emails)
         });
       }
+      console.log('componentDidMount setState ', that.state.emails)
     })
-    .catch(err => console.log('AsyncStorage error ', err));
+    .catch(err => console.log('componentDid AsyncStorage error ', err));
+
+    // });
+
   }
 
-  pressRow(id, rowId) {
+  removeMail(id) {
     var that = this;
-    AsyncStorage.getItem(this.props.type)
+    AsyncStorage.getItem('emails')
     .then(res => {
-      var data;
-      if (res === null) {
-        data = {users: [{id: id, add: true, last: 0}]};
-      } else {
-        data = JSON.parse(res);
-        var not_exists = true;
-        data.users.map(u => {
-          if (u.id === id) {
-            u.add = !u.add;
-            not_exists = false;
-          }
-        });
-        if (not_exists) {
-          data.users.push({id: id, add: true, last: 0});
-        }
-      }
-      console.log('AsyncStorage ', JSON.stringify(data));
-      AsyncStorage.setItem(that.props.type, JSON.stringify(data));
+      var emails = JSON.parse(res);
+      emails.splice(id, 1);
+      console.log('AsyncStorage ', JSON.stringify(emails));
+      AsyncStorage.setItem('emails', JSON.stringify(emails));
 
-      var friends = this.state.friends.slice();
-      friends[rowId].add = !friends[rowId].add;
-      this.setState({
-        friends: friends
-      });
-
+      this.setState({emails});
     })
     .catch(err => console.log('AsyncStorage error', err));
   }
 
   renderRow(rowData, sectionId, rowId, highlightRow) {
-    var name = rowData.name;
-    var foot = rowData.foot;
-    var add = rowData.add;
-    var img = rowData.img;
-    var id = rowData.id;
+    console.log('Render row: ' + rowData);
     return (
-        <View style={styles.row}>
-          <Image style={styles.thumb} source={{uri: img}} />
-          <View style={styles.container}>
-            <View style={styles.name_info}>
-              <Text style={styles.name}>
-                {name === '' ? 'No Name' : name}
-              </Text>
-              <Text style={styles.name}>
-                {foot}
-              </Text>
-            </View>
-          </View>
-          <TouchableHighlight onPress={this.pressRow.bind(this, id, rowId)}>
-          <View style={styles.button}>
-            {add ? 
-              <Text style={styles.button_remove}>
-                REMOVE{'\n'}USER!
-              </Text>
-            :
-              <Text style={styles.button_add}>
-                ADD USER!
-              </Text>
-            }
-          </View>
-          </TouchableHighlight>
-        </View>);
+      <View style={styles.row}>
+        <View style={styles.name_info}>
+          <Text style={styles.name}>
+            {rowData.id}
+          </Text>
+        </View>
+        <TouchableHighlight onPress={this.removeMail.bind(this, rowId)}>
+          <Text style={styles.button_remove}>
+            REMOVE{'\n'}USER!
+          </Text>
+        </TouchableHighlight>
+      </View>);
+  }
+
+// TODO: add email validation (onChange event)
+  addEmail() {
+    var that = this;
+    AsyncStorage.setItem('emails', null);
+    AsyncStorage.getItem('emails')
+    .then(res => {
+      var emails = JSON.parse(res);
+      emails.push({id: that.state.email});
+      that.setState({
+        modal: false,
+        empty: false,
+        emails: emails
+      });
+      console.log('SetItem: ', emails)
+      AsyncStorage.setItem('emails', JSON.stringify(emails));
+    })
+    .catch(err => console.log('AsyncStorage error ', err));
   }
 
   clickAdd() {
-    
+    this.setState({modal: true})
   }
 
   render() {
     return (
-      <View>
-        <TouchableHighlight onPress={this.clickAdd}>
+      <View style={styles.container}>
+        <Modal
+          animationType={"slide"}
+          transparent={false}
+          visible={this.state.modal}
+          onRequestClose={() => {alert("Modal has been closed.")}}
+          >
+          <View>
+            <Text style={styles.instructions}>Enter e-maill address that will recieve photos</Text>
+            <TextInput onChangeText={(email) => this.setState({email})} />
+            <TouchableHighlight onPress={this.addEmail} style={styles.button}>
+              <Text>
+                Add new email address
+              </Text>
+            </TouchableHighlight>
+          </View>
+        </Modal>
+        <TouchableHighlight onPress={this.clickAdd} style={styles.button}>
           <Text>
-            Add new Email!
+            Add new email address
           </Text>
-        </TouchableHighlight>
+        </TouchableHighlight>      
         {
           this.state.empty ?
-          <Text>Your email list is empty</Text>
+          <Text style={styles.welcome}>Your email list is empty</Text>
           :
           <ListView 
             dataSource={this.state.dataSource}
@@ -160,7 +183,27 @@ export default class Emails extends Component {
 }
 
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#F5FCFF',
+  },
+  welcome: {
+    fontSize: 20,
+    textAlign: 'center',
+    margin: 10,
+  },
+  button: {
+    padding: 10,
+    backgroundColor: 'green',
+    marginBottom: 10,
+    alignItems: 'center',
+  },
+  instructions: {
+    textAlign: 'center',
+    color: '#333333',
+    marginBottom: 5,
+  },
   row: {
     flexDirection: 'row',
     justifyContent: 'center',
@@ -178,20 +221,9 @@ var styles = StyleSheet.create({
 // fontSize
     flex: 1,
   },
-  container: {
-    flexDirection: 'row',
-    flex: 1,
-    paddingLeft: 10,
-  },
   user_info: {
     flex: 1,
     paddingTop: 10,
-  },
-  button: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: 100,
   },
   button_add: {
     color: 'green',
@@ -199,4 +231,5 @@ var styles = StyleSheet.create({
   button_remove: {
     color: 'red',
   },
+
 });

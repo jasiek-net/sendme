@@ -27,6 +27,11 @@ import {
   Image
 } from 'react-native';
 
+import {
+  MKButton,
+  MKColor,
+} from 'react-native-material-kit';
+
 import {API} from './global';
 
 import gg from './android/app/google-services.json';

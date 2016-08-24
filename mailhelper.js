@@ -68,7 +68,7 @@ export default class MailHelper {
 				        	if (res.data && res.data.length) {
 					        	for (var j=0; j < res.data.length; j++) {
 						          var imgUrl = res.data[j].images.standard_resolution.url
-					            // that.sendMail(imgUrl);
+					            that.sendMail(imgUrl);
 					        	}
 				        	} else {
 				        		console.log('MailHelper: fetch problem ', res);
