@@ -48,7 +48,7 @@ export default class MailHelper {
 	}
 
 	static updateUser(platform, index, last) {
-		console.log('updateUser: set new last for user ' + index + ' last ' + last);
+		console.log('updateUser: set new last for ' + platform + ' user ' + index + ' last ' + last);
 		AsyncStorage.getItem(platform)
 		.then(res => {
 			var data = JSON.parse(res);
@@ -70,33 +70,25 @@ export default class MailHelper {
 		  .then(res => {
 		    if (res != null) {
 		      var data = JSON.parse(res);
-		      if (data.users) {
+		      if (data && data.users) {
 			      for (var i = 0; i < data.users.length; i++) {
 			      	if (data.users[i].add) {
 			      		console.log('Sending photo from facebook user: ', data.users[i]);
 				      	var user = data.users[i].id;
 				      	var last = data.users[i].last;
 				 				var index = i;
-					      var url = API.FB + user + '/photos?fields=images,created_time&access_token=' + token;
+					      var url = API.FB + user 
+					      	+ '/photos?fields=images,created_time&type=uploaded&access_token='
+					      	+ token + '&since=' + last;
 					      fetch(url)
 				        .then(res => res.json())
 				        .then(res => {
 				        	if (res.data && res.data.length) {
-						 				var new_last = last;
 					        	for (var j = 0; j < res.data.length; j++) {
-					        		var format = res.data[j].created_time.split('+')[0];
-					        		var timeStamp = Date.parse(format);
-					        		if (timeStamp > last) {
-							          new_last = new_last < timeStamp ? timeStamp : new_last;
-							          var imgUrl = res.data[j].images[0].source;
-						            that.sendMail(imgUrl);
-					        		} else {
-					        			console.log('MailHelper: facebook photo too old');
-					        		}
-					        	}
-					        	if (new_last !== last) {
-						        	MailHelper.updateUser('facebook', index, new_last);
-					        	}
+						          var imgUrl = res.data[j].images[0].source;
+					            that.sendMail(imgUrl);
+				        		}
+						        MailHelper.updateUser('facebook', index, Data.now()/1000);
 				        	} else {
 				        		console.log('MailHelper: fetch problem ', res);
 				        	}
@@ -114,6 +106,7 @@ export default class MailHelper {
 
 	static getInstagram() {
     console.log('MailHelper: getInstagram invoke');
+
 	  var that = this;
 	  Keychain.getInternetCredentials('instagram')
     .then(sec => {
@@ -135,20 +128,13 @@ export default class MailHelper {
 				        .then(res => res.json())
 				        .then(res => {
 				        	if (res.data && res.data.length) {
-						 				var new_last = last;
 					        	for (var j = 0; j < res.data.length; j++) {
-					        		var timeStamp = res.data[j].created_time;
-					        		if (timeStamp > last) {
-							          new_last = new_last < timeStamp ? timeStamp : new_last;
+					        		if (last < res.data[j].created_time) {
 							          var imgUrl = res.data[j].images.standard_resolution.url
 						            that.sendMail(imgUrl);
-					        		} else {
-					        			console.log('MailHelper: insta photo too old');
 					        		}
 					        	}
-					        	if (new_last !== last) {
-						        	MailHelper.updateUser('instagram', index, new_last);
-					        	}
+					        	MailHelper.updateUser('instagram', index, Data.now()/1000);
 				        	} else {
 				        		console.log('MailHelper: fetch problem ', res);
 				        	}
@@ -175,8 +161,8 @@ export default class MailHelper {
       .then(res => {
 
       	AsyncStorage.getItem('emails')
-		    .then(res => {
-		    	emails = JSON.parse(res);
+		    .then(resp => {
+		    	emails = JSON.parse(resp);
 
 
 		      var encodedMail = that.mailBody(res, emails);
@@ -208,27 +194,30 @@ export default class MailHelper {
     .catch(err => console.log('MailHelper: Keychain error ', err));
   }
 
-  static mailBody(img, emails) {
+  static mailBody(img, ema) {
+  	var emails = ema.map(e => { return e.id });
+  	var boundary = Date.now()
+
     return encode(
       "MIME-Version: 1.0\n" +
-      "Subject: [photo]\n" +
+      "Subject: photo\n" +
       // "To: ramkazoome@gmail.com\n" +
-      "Cc: " + emails.join(', ') + "\n" + 
-      "Content-Type: multipart/mixed; boundary=foo_bar_baz\n\n" +
+      "Bcc: " + emails.join(', ') + "\n" + 
+      "Content-Type: multipart/mixed; boundary=" + boundary + "\n\n" +
 
       // "--foo_bar_baz\n" + 
       // "Content-Type: text/plain; charset=\"UTF-8\"\n\n" +
       // "The actual message text goes here" + 
 
-      "\n\n--foo_bar_baz\n" + 
+      "\n\n--" + boundary + "\n" + 
       "Content-Type: image/jpeg;\n" + 
       "MIME-Version: 1.0\n" + 
-      "Content-Disposition: attachment; filename=\"example.jpg\"\n" + 
+      "Content-Disposition: attachment; filename=\"photo.jpg\"\n" + 
       "Content-Transfer-Encoding: base64\n\n" + 
 
       img.base64() + 
 
-      "\n\n--foo_bar_baz--"
+      "\n\n--" + boundary + "--"
     ).replace(/\+/g, '-').replace(/\//g, '_');
   }
 

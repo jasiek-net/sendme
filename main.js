@@ -49,6 +49,8 @@ import RNFetchBlob from 'react-native-fetch-blob';
 
 import MailHelper from './mailhelper';
 
+import Icon from 'react-native-vector-icons/FontAwesome';
+
 
 
 const insta_redirect = 'insta://redirect';
@@ -109,105 +111,8 @@ export default class Main extends Component {
     });
   }
 
-  printer() {
-      AsyncStorage.getItem('facebook')
-      .then(res => {
-        if (res != null) {
-          var data = JSON.parse(res);
-          if (data.users) {
-            console.log('All users: ', data.users);
-          }
-        }
-      });
-  }
-
   clickEmail() {
     this.props.navigator.push({id: 'emails'});
-  }
-
-  render() {
-    return (
-      <View style={styles.container}>
-        <View style={styles.head}>
-          <Text style={styles.welcome}>
-            Welcome to zoome!
-          </Text>
-        </View>
-        <ScrollView style={styles.scroll}>
-          <TouchableHighlight onPress={this.loginGoogle.bind(this)} style={styles.menuItem}>
-            <View>
-              <Text style={styles.menuHead}>
-                GMAIL
-              </Text>
-              <Text style={styles.menuFoot}>
-                Configure your gmail account
-              </Text>
-            </View>
-          </TouchableHighlight>
-          <TouchableHighlight onPress={this.clickEmail} style={styles.menuItem}>
-            <View>
-              <Text style={styles.menuHead}>
-                EMAILS
-              </Text>
-              <Text style={styles.menuFoot}>
-                Add or remove emails from your recipients list
-              </Text>
-            </View>
-          </TouchableHighlight>
-          <TouchableHighlight onPress={this.clickFacebook.bind(this)} style={styles.menuItem}>
-            <View>
-              <Text style={styles.menuHead}>
-                FACEBOOK
-              </Text>
-              <Text style={styles.menuFoot}>
-                Configure your Facebook followers list
-              </Text>
-            </View>
-          </TouchableHighlight>
-          <TouchableHighlight onPress={this.clickInstagram} style={styles.menuItem}>
-            <View>
-              <Text style={styles.menuHead}>
-                INSTAGRAM
-              </Text>
-              <Text style={styles.menuFoot}>
-                Configure your Instagram followers list
-              </Text>
-            </View>
-          </TouchableHighlight>
-          <TouchableHighlight onPress={this.configuration} style={styles.menuItem}>
-            <View>
-              <Text style={styles.menuHead}>
-                SETTINGS
-              </Text>
-              <Text style={styles.menuFoot}>
-                Set the hours of sending images and other
-              </Text>
-            </View>
-          </TouchableHighlight>
-
-          <TouchableHighlight onPress={MailHelper.sendPhotos} style={styles.menuItem}>
-            <View>
-              <Text style={styles.menuHead}>
-                SEND PHOTOS
-              </Text>
-              <Text style={styles.menuFoot}>
-                Send photos immediatly to test the app
-              </Text>
-            </View>
-          </TouchableHighlight>
-          <TouchableHighlight onPress={this.printer.bind(this)} style={styles.menuItem}>
-            <View>
-              <Text style={styles.menuHead}>
-                PRINT
-              </Text>
-              <Text style={styles.menuFoot}>
-                Print data for debug reason
-              </Text>
-            </View>
-          </TouchableHighlight>
-        </ScrollView>
-      </View>
-    );
   }
 
   loginGoogle() {
@@ -290,8 +195,118 @@ export default class Main extends Component {
       console.log('Instagram: no credentials ', err);
       that.loginInstagram();
     });
-}
+  }
 
+  printer() {
+    AsyncStorage.removeItem('facebook')
+    .then(res => console.log('Instagram cleared! ', res));
+    AsyncStorage.removeItem('instagram')
+    .then(res => console.log('Instagram cleared! ', res));
+
+    // AsyncStorage.getItem('emails')
+    // .then(res => {
+    //   if (res != null) {
+    //     var data = JSON.parse(res);
+    //     console.log('All users: ', data);
+    //   }
+    // });
+  }
+
+  render() {
+    return (
+      <View style={styles.container}>
+        <ScrollView style={styles.scroll}>
+
+          <View style={[styles.section, {marginTop: 20}]}>
+            <View style={[styles.sectionHead, {borderBottomColor: COL.green}]}>
+              <Text style={[styles.sectionText, {color: COL.green}]}>
+                SOCIAL ACCOUNTS
+              </Text>
+            </View>
+            <TouchableHighlight onPress={this.clickFacebook.bind(this)} style={styles.button}>
+              <View style={styles.buttonView}>
+                <Icon style={styles.buttonIcon} name="facebook-square"/>
+                <Text style={styles.buttonText}>
+                  Facebook
+                </Text>
+                <Icon style={styles.buttonArrow} name="angle-right"/>
+              </View>
+            </TouchableHighlight>
+            <TouchableHighlight onPress={this.clickInstagram} style={styles.button}>
+              <View style={styles.buttonView}>
+                <Icon style={styles.buttonIcon} name="instagram"/>
+                <Text style={styles.buttonText}>
+                  Instagram
+                </Text>
+                <Icon style={styles.buttonArrow} name="angle-right"/>
+              </View>
+            </TouchableHighlight>
+          </View>
+
+          <View style={styles.section}>
+            <View style={[styles.sectionHead, {borderBottomColor: COL.blue}]}>
+              <Text style={[styles.sectionText, {color: COL.blue}]}>
+                MAIN SETTINGS
+              </Text>
+            </View>
+            <TouchableHighlight onPress={this.loginGoogle.bind(this)} style={styles.button}>
+              <View style={styles.buttonView}>
+                <Icon style={styles.buttonIcon} name="google"/>
+                <Text style={styles.buttonText}>
+                  Gmail Account
+                </Text>
+                <Icon style={styles.buttonArrow} name="angle-right"/>
+              </View>
+            </TouchableHighlight>
+            <TouchableHighlight onPress={this.clickEmail} style={styles.button}>
+              <View style={styles.buttonView}>
+                <Icon style={styles.buttonIcon} name="envelope-o"/>
+                <Text style={styles.buttonText}>
+                  Recipients emails
+                </Text>
+                <Icon style={styles.buttonArrow} name="angle-right"/>
+              </View>
+            </TouchableHighlight>
+          </View>
+
+          <View style={[styles.section, {marginBottom: 20}]}>
+            <View style={[styles.sectionHead, {borderBottomColor: COL.orange}]}>
+              <Text style={[styles.sectionText, {color: COL.orange}]}>
+                CONFIGURATIONS
+              </Text>
+            </View>
+            <TouchableHighlight onPress={this.configuration} style={styles.button}>
+              <View style={styles.buttonView}>
+                <Icon style={styles.buttonIcon} name="cogs"/>
+                <Text style={styles.buttonText}>
+                  Settings
+                </Text>
+                <Icon style={styles.buttonArrow} name="angle-right"/>
+              </View>
+            </TouchableHighlight>
+            <TouchableHighlight onPress={MailHelper.sendPhotos} style={styles.button}>
+              <View style={styles.buttonView}>
+                <Icon style={styles.buttonIcon} name="paper-plane"/>
+                <Text style={styles.buttonText}>
+                  Send photos now!
+                </Text>
+                <Icon style={styles.buttonArrow} name="angle-right"/>
+              </View>
+            </TouchableHighlight>
+            <TouchableHighlight onPress={this.printer.bind(this)} style={styles.button}>
+              <View style={styles.buttonView}>
+                <Icon style={styles.buttonIcon} name="print"/>
+                <Text style={styles.buttonText}>
+                  Print debug info
+                </Text>
+                <Icon style={styles.buttonArrow} name="angle-right"/>
+              </View>
+            </TouchableHighlight>
+          </View>
+        </ScrollView>
+      </View>
+    );
+  }
 }
 
 const styles = StyleSheet.create({
@@ -299,28 +314,51 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: COL.bg,
   },
-  head: {
-    borderBottomColor: COL.btn_head,
-    borderBottomWidth: 1,
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-    color: COL.btn_head,
-  },
   scroll: {
     flex: 1,
   },
-  menuItem: {
+  section: {
+    margin: 10,
+    backgroundColor: COL.sec_bg,
+    borderWidth: 1,
+    borderBottomWidth: 0,
+    borderColor: COL.sec_brd,
+  },
+  sectionHead: {
     padding: 10,
+    borderBottomWidth: 1,
+  },
+  sectionText: {
+    color: COL.sec_txt,
+    fontWeight: '700',
+  },
+  icon: {
+    width: 30,
+    color: COL.btn_head,
+  },
+  button: {
+    padding: 14,
     backgroundColor: COL.btn_bg,
     borderBottomWidth: 1,
     borderBottomColor: COL.brd_sml,
   },
-  menuHead: {
+  buttonView: {
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  buttonText: {
     color: COL.btn_head,
     fontSize:20,
+    flex: 1,
+  },
+  buttonIcon: {
+    color: COL.btn_txt,
+    fontSize: 20,
+    marginRight: 10,
+  },
+  buttonArrow: {
+    color: COL.btn_txt,
+    fontSize: 20,
   },
   menuFoot: {
     color: COL.btn_foot,

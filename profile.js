@@ -31,30 +31,42 @@ import Keychain from 'react-native-keychain';
 import RNFetchBlob from 'react-native-fetch-blob';
 
 
-export default class Facebook extends Component {
+export default class Profile extends Component {
 
   constructor(props) {
     super(props);
     console.log(props.user);
-    this.img = props.user.picture.data.url;
-    this.username = props.user.name;
+    switch(this.props.type) {
+      case 'facebook': {
+        this.img = props.user.picture.data.url;
+        this.username = props.user.name;
+        break;
+      }
+      case 'instagram': {
+        this.img = props.user.data.profile_picture;
+        this.username = props.user.data.full_name;
+        break;
+      }
+    }
     // Cool stuff! https://facebook.github.io/react/docs/reusable-components.html#es6-classes
     this.user = this.user.bind(this);
     this.friends = this.friends.bind(this);
     this.logout = this.logout.bind(this);
   }
 
-  friends() {
+  friends_facebook() {
     var that = this;
     Keychain.getInternetCredentials('facebook')
       .then(sec => {
         var token = sec.password
         var userId = sec.username
-        var api = API.FB + 'me/friends?fields=name,id,picture&access_token=' + token;
+        var api = API.FB + 'me/friends?fields=name,id,picture&access_token=' + token
+          + '&limit=1';
         console.log('API ', api);
         fetch(api)
           .then(res => res.json())
           .then(res => {
+            var next = res.paging.next;
             var friends = res.data.map(a => {
               return {
                 name: a.name,
@@ -65,7 +77,7 @@ export default class Facebook extends Component {
               }
             });
             console.log('push to friends ', friends);
-            that.props.navigator.push({id: 'friends', friends, type: 'facebook'});
+            that.props.navigator.push({id: 'friends', type: 'facebook', friends, next});
           })
           .catch(err => console.log('Facebook: fetch friends ', err));
         })
@@ -74,11 +86,59 @@ export default class Facebook extends Component {
         });
   }
 
+  friends_instagram() {
+    var that = this;
+    Keychain.getInternetCredentials('instagram')
+      .then(sec => {
+        var token = sec.password
+        var api = API.IN + 'users/self/follows?' + token;
+        fetch(api)
+          .then(res => res.json())
+          .then(res => {
+            var friends = res.data.map(a => {
+              return {
+                name: a.username,
+                foot: a.full_name,
+                add: false,
+                img: a.profile_picture,
+                id: a.id
+              }
+            });
+            that.props.navigator.push({id: 'friends', friends, type: 'instagram'});
+          })
+          .catch(err => console.log('Instagram: fetch friends ', err));
+        })
+        .catch(err => {
+          console.log('Keychain: no credentials ', err);
+        });
+  }
+
+  friends() {
+    var api;
+    var type = this.props.type;
+    switch(type) {
+      case 'facebook':
+        api = API.FB_friends;
+        break;
+      case 'instagram':
+        api = API.IN_friends;
+        break;
+    }
+
+    var that = this;
+    Keychain.getInternetCredentials(type)
+    .then(sec => {
+      var token = sec.password
+      that.props.navigator.push({id: 'friends', type: type, next: api + token});
+    })
+    .catch(err => console.log('Keychain error ', err));
+  }
+
   user() {
 
   }
 
-  logout() {
+  logout_facebook() {
     var that = this;
     Alert.alert(
       'Facebook log out',
@@ -88,6 +148,38 @@ export default class Facebook extends Component {
         {text: 'No'}
       ]
     )
+  }
+
+  logout_instagram() {
+    var that = this;
+    Alert.alert(
+      'Instagram log out',
+      'Do you want to log out from your instagram account?',
+      [
+        {text: 'Yes', onPress: () => { 
+          Keychain.resetInternetCredentials('instagram');
+          var url = 'https://instagram.com/accounts/logout';
+          Linking.openURL(url)
+          .catch(err => console.log('Instagram: logout error ', err));
+          that.props.navigator.pop();
+          }
+        },
+        {text: 'No'}
+      ]
+    )
+  }
+
+  logout() {
+    switch(this.props.type) {
+      case 'facebook': {
+        this.logout_facebook();
+        break;
+      }
+      case 'instagram': {
+        this.logout_instagram();
+        break;
+      }
+    }
   }
 
   render() {

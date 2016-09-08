@@ -27,6 +27,7 @@ import gg from './android/app/google-services.json';
 import {encode} from 'base-64'
 import Keychain from 'react-native-keychain';
 import RNFetchBlob from 'react-native-fetch-blob';
+import List from 'react-native-gifted-listview';
 
 import {API, COL} from './global';
 
@@ -34,44 +35,47 @@ export default class Friends extends Component {
 
   constructor(props) {
     super(props);
-    var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2})
+    // var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2})
  
-    this.state = {
-      dataSource: ds.cloneWithRows([]),
-      friends: props.friends
-    }
-
+    // this.state = {
+    //   dataSource: ds.cloneWithRows([]),
+    //   friends: props.friends
+    // }
     // bind methods
+    this.state = {
+      next: props.next
+    }
     this.renderRow = this.renderRow.bind(this);
+    this.onFetch = this.onFetch.bind(this);
   }
 
   componentDidMount() {
-    var that = this;
-    AsyncStorage.getItem(this.props.type)
-      .then(res => {
-        var friends = that.state.friends.slice();
+    // var that = this;
+    // AsyncStorage.getItem(this.props.type)
+    //   .then(res => {
+    //     var friends = that.state.friends.slice();
 
-        if (res !== null) {
-          var data = JSON.parse(res);
-          if (data && data.users) {
-            friends = friends.map(f => {
-              data.users.map(u => {
-                if (f.id === u.id && u.add) {
-                  f.add = true;
-                }
-              });
-              return f;
-            })
-          }
-        }
+    //     if (res !== null) {
+    //       var data = JSON.parse(res);
+    //       if (data && data.users) {
+    //         friends = friends.map(f => {
+    //           data.users.map(u => {
+    //             if (f.id === u.id && u.add) {
+    //               f.add = true;
+    //             }
+    //           });
+    //           return f;
+    //         })
+    //       }
+    //     }
 
-        that.setState({
-          friends: friends,
-          dataSource: that.state.dataSource.cloneWithRows(that.state.friends)
-        });
+    //     that.setState({
+    //       friends: friends,
+    //       dataSource: that.state.dataSource.cloneWithRows(that.state.friends)
+    //     });
 
-      })
-      .catch(err => console.log('AsyncStorage error ', err));
+    //   })
+    //   .catch(err => console.log('AsyncStorage error ', err));
   }
 
   pressRow(id, rowId) {
@@ -98,8 +102,15 @@ export default class Friends extends Component {
       AsyncStorage.setItem(that.props.type, JSON.stringify(data))
       .catch(err => console.log('AsyncStorage error ', err));
 
-      var friends = this.state.friends.slice();
+      var friends = that.refs.list._getRows();
+      console.log('Friends ', friends);
+      friends = JSON.parse(JSON.stringify(friends));
+
+      // var friends = this.state.friends.slice();
       friends[rowId].add = !friends[rowId].add;
+
+      that.refs.list.update(friends);
+
       this.setState({
         friends: friends
       });
@@ -114,6 +125,7 @@ export default class Friends extends Component {
     var add = rowData.add;
     var img = rowData.img;
     var id = rowData.id;
+    console.log('Render row ', rowData);
     return (
         <View style={styles.row}>
           <Image style={styles.img} source={{uri: img}} />
@@ -143,13 +155,104 @@ export default class Friends extends Component {
         </View>);
   }
 
+  parseData(type, res, users) {
+    var friends;
+    var next;
+    switch(type) {
+      case 'facebook': {
+        next = res.paging.next;
+        friends = res.data.map(a => {
+          return {
+            name: a.name,
+            foot: a.id,
+            add: false,
+            img: a.picture.data.url,
+            id: a.id
+            }
+          });
+        break;
+      }
+      case 'instagram': {
+        next = res.pagination.next_url;
+        friends = res.data.map(a => {
+          return {
+            name: a.username,
+            foot: a.full_name,
+            add: false,
+            img: a.profile_picture,
+            id: a.id
+          }
+        });
+        console.log('instagram ', res);
+        break;
+      }
+    }
+    if (users !== null) {
+      var data = JSON.parse(users);
+      if (data && data.users) {
+        friends = friends.map(f => {
+          data.users.map(u => {
+            if (f.id === u.id && u.add) {
+              f.add = true;
+            }
+          });
+          return f;
+        })
+      }
+    }
+
+    return {friends, next}
+  }
+
+  onFetch(page = 1, callback, options) {
+    var that = this;
+    fetch(this.state.next)
+    .then(res => res.json())
+    .then(res => {
+      AsyncStorage.getItem(that.props.type)
+      .then(users => {
+        var data = that.parseData(that.props.type, res, users);
+        that.setState({next: data.next});
+        callback(data.friends, {allLoaded: (data.next === undefined)})
+      })
+      .catch(err => console.log('AsyncStorage error: ', err))
+    })
+    .catch(err => console.log('Friends: fetch friends ', err));
+  }
+
   render() {
     return (
-      <ListView
+      <List
+        ref="list"
+        rowView={this.renderRow}
+        onFetch={this.onFetch}
+        firstLoader={true}
+        pagination={true}
+        refreshable={false}
+        withSections={false}
+        refreshableTintColor={COL.green}
         style={styles.list}
-        dataSource={this.state.dataSource}
-        renderRow={this.renderRow}
-        enableEmptySections={true}
+        customStyles={{
+          border: {
+            borderWidth: 1,
+            padding: 3,
+            paddingLeft: 10,
+            paddingRight: 10,
+            borderRadius: 3,
+            borderColor: COL.green,
+          },
+          paginationView: {
+            margin: 10,
+            backgroundColor: COL.bg,
+          },
+          actionsLabel: {
+            color: COL.green,
+            fontSize: 15,
+          },
+        }}
+        // dataSource={this.state.dataSource}
+        // renderRow={this.renderRow}
+        // enableEmptySections={true}
       />
     );
   }
@@ -158,6 +261,9 @@ export default class Friends extends Component {
 const styles = StyleSheet.create({
   list: {
     backgroundColor: COL.bg,
+  },
+  load: {
+    backgroundColor: 'red',
   },
   row: {
     flexDirection: 'row',

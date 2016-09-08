@@ -21,6 +21,8 @@ import {
   Image
 } from 'react-native';
 
+import Icon from 'react-native-vector-icons/FontAwesome';
+
 import gg from './android/app/google-services.json';
 
 import {API, COL} from './global';
@@ -40,6 +42,14 @@ export default class Instagram extends Component {
     this.friends = this.friends.bind(this);
     this.user = this.user.bind(this);
     this.logout = this.logout.bind(this);
+  }
+
+  friends_fb() {
+
+  }
+
+  friends_insta() {
+
   }
 
   friends() {
@@ -102,20 +112,32 @@ export default class Instagram extends Component {
             style={styles.userImg} />
           <Text style={styles.userName}>{this.username}</Text>
         </View>
-        <TouchableHighlight onPress={this.user} style={styles.btn}>
-          <Text style={styles.btnHead}>
-            YOUR PROFILE
-          </Text>
+        <TouchableHighlight onPress={this.user} style={styles.button}>
+          <View style={styles.buttonView}>
+            <Icon style={styles.buttonIcon} name="user"/>
+            <Text style={styles.buttonText}>
+              Your profile
+            </Text>
+            <Icon style={styles.buttonArrow} name="angle-right"/>
+          </View>
         </TouchableHighlight>
-        <TouchableHighlight onPress={this.friends} style={styles.btn}>
-          <Text style={styles.btnHead}>
-            FRIENDS
-          </Text>
+        <TouchableHighlight onPress={this.friends} style={styles.button}>
+          <View style={styles.buttonView}>
+            <Icon style={styles.buttonIcon} name="users"/>
+            <Text style={styles.buttonText}>
+              Friends
+            </Text>
+            <Icon style={styles.buttonArrow} name="angle-right"/>
+          </View>
         </TouchableHighlight>
-        <TouchableHighlight onPress={this.logout} style={styles.btn}>
-          <Text style={styles.btnHead}>
-            LOG OUT
-          </Text>
+        <TouchableHighlight onPress={this.logout} style={styles.button}>
+          <View style={styles.buttonView}>
+            <Icon style={styles.buttonIcon} name="sign-out"/>
+            <Text style={styles.buttonText}>
+              Log out
+            </Text>
+            <Icon style={styles.buttonArrow} name="angle-right"/>
+          </View>
         </TouchableHighlight>
       </View>
     );
@@ -145,17 +167,30 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: COL.btn_foot,
   },
-  btn: {
+  button: {
+    padding: 14,
     backgroundColor: COL.btn_bg,
-    padding: 10,
     borderBottomWidth: 1,
     borderBottomColor: COL.brd_sml,
   },
-  btnHead: {
-    color: COL.btn_head,
-    fontSize: 20,
+  buttonView: {
+    flexDirection: 'row',
+    alignItems: 'center'
   },
-  btnFoot: {
-    color: COL.btn_foot,
+  buttonText: {
+    color: COL.btn_head,
+    fontSize:20,
+    flex: 1,
+  },
+  buttonIcon: {
+    color: COL.btn_txt,
+    fontSize: 20,
+    textAlign: 'center',
+    width: 30,
+    marginRight: 10,
+  },
+  buttonArrow: {
+    color: COL.btn_txt,
+    fontSize: 20,
   },
 });
