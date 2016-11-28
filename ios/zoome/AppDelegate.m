@@ -13,6 +13,7 @@
 #import "RCTRootView.h"
 
 #import <FBSDKCoreKit/FBSDKCoreKit.h>
+#import "RNGoogleSignin.h"
 
 @implementation AppDelegate
 
@@ -46,14 +47,14 @@
   [FBSDKAppEvents activateApp];
 }
 
-- (BOOL)application:(UIApplication *)application
-            openURL:(NSURL *)url
-  sourceApplication:(NSString *)sourceApplication
-         annotation:(id)annotation {
-  return [[FBSDKApplicationDelegate sharedInstance] application:application
-                                                        openURL:url
-                                              sourceApplication:sourceApplication
-                                                     annotation:annotation];
+- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
+  
+  if ([[FBSDKApplicationDelegate sharedInstance] application:application openURL:url sourceApplication:sourceApplication annotation:annotation]) {
+    return YES;
+  } else if ([RNGoogleSignin application:application openURL:url sourceApplication:sourceApplication annotation:annotation]) {
+    return YES;
+  }
+  return NO;
 }
 
 @end

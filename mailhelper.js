@@ -24,27 +24,29 @@ export default class MailHelper {
     NativeModules.TimerModule.startTimer(5000, this.sendPhotos);
 	}
 
-	static sendPhotos() {
+	static sendPhotos(call) {
+		console.log('MailHelper.sendPhotos() start');
 		var that = this;
-    GoogleSignin.configure({
-      scopes: ["https://www.googleapis.com/auth/gmail.send"], // what API you want to access on behalf of the user, default is email and profile
-      offlineAccess: false // if you want to access Google API on behalf of the user FROM YOUR SERVER
-    })
-    .then(() => {
-      GoogleSignin.currentUserAsync()
-      .then(res => {
-        var pass = res.accessToken;
-        var user = res.id;
-        Keychain.setInternetCredentials('google', user, pass)
-        .then(() => {
-        	console.log('MailHelper: refresh token');
-        	MailHelper.getInstagram();
-        	MailHelper.getFacebook();
-        })
-        .catch(err => console.log('MailHelper: Keychain error ', err));
-      })
-      .catch(err => console.log('MailHelper: refresh token error ', err));
-    });
+	    GoogleSignin.configure({
+	      scopes: ["https://www.googleapis.com/auth/gmail.send"], // what API you want to access on behalf of the user, default is email and profile
+	      offlineAccess: false // if you want to access Google API on behalf of the user FROM YOUR SERVER
+	    })
+	    .then(() => {
+	      GoogleSignin.currentUserAsync()
+	      .then(res => {
+	        var pass = res.accessToken;
+	        var user = res.id;
+	        Keychain.setInternetCredentials('google', user, pass)
+	        .then(() => {
+	        	console.log('MailHelper: refresh token');
+	        	MailHelper.getInstagram();
+	        	MailHelper.getFacebook();
+	        	call()
+	        })
+	        .catch(err => console.log('MailHelper: Keychain error ', err));
+	      })
+	      .catch(err => console.log('MailHelper: refresh token error ', err));
+	    });
 	}
 
 	static updateUser(platform, index, last) {

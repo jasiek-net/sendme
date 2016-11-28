@@ -25,7 +25,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 
 import gg from './android/app/google-services.json';
 
-import {API, COL} from './global';
+import {API, COL} from './Global';
 
 import {encode} from 'base-64'
 import Keychain from 'react-native-keychain';
