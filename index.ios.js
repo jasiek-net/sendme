@@ -12,7 +12,7 @@ import {
   View
 } from 'react-native';
 
-class zoome extends Component {
+class SendMe extends Component {
 
   render() {
     return (
@@ -51,4 +51,4 @@ const styles = StyleSheet.create({
   },
 });
 
-AppRegistry.registerComponent('zoome', () => zoome);
+AppRegistry.registerComponent('SendMe', () => SendMe);
