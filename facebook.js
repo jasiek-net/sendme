@@ -30,7 +30,7 @@ import RNFetchBlob from 'react-native-fetch-blob';
 import gg from './android/app/google-services.json';
 import {API, COL, SIZ} from './Global';
 import Empty from './Empty';
-
+import Login from './Login';
 
 export default class Facebook extends Component {
 
@@ -111,6 +111,7 @@ export default class Facebook extends Component {
   }
 
   login() {
+    this.setState({state: 'empty'});
     LoginManager.logInWithReadPermissions(['user_friends', 'user_photos'])
     .then(res => {
         if (res.isCancelled) {
@@ -146,17 +147,7 @@ export default class Facebook extends Component {
       case 'empty':
         return (<Empty />)
       case 'login':
-        return (
-          <View style={s.cont}>
-            <Icon.Button
-              onPress={this.login}
-              name="facebook-square"
-              size={SIZ.header}
-              color={COL.txt}
-              backgroundColor="transparent">
-              Login with Facebook
-            </Icon.Button>
-          </View>)
+        return (<Login icon="facebook-square" type="Facebook" call={this.login} />)
       case 'logged':
         return (
           <View style={s.cont}>

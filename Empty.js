@@ -3,16 +3,24 @@
 import React, {Component} from 'react';
 import {
   ActivityIndicator,
-  StyleSheet,
   View
 } from 'react-native';
-
 import {COL} from './Global';
 
 export default class Empty extends Component {
+  shouldComponentUpdate() {
+    return false;
+  }
+
 	render() {
 		return (
-			<View style={s.cont}>
+			<View style={{
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexDirection: 'row',
+        backgroundColor: COL.bg,        
+      }}>
         <ActivityIndicator
           color={COL.green}
           size={'large'}
@@ -20,14 +28,3 @@ export default class Empty extends Component {
 			</View>);
 	}
 }
-
-const s = StyleSheet.create({
-  cont: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexDirection: 'row',
-    backgroundColor: COL.bg,
-  },
-
-});
