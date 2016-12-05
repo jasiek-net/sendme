@@ -9,6 +9,8 @@ import Photo from './Photo';
 import Gmail from './Gmail';
 import Settings from './Settings';
 
+import Friends from './Friends';
+
 export default class Nav extends Component {
   constructor(props) {
     super(props);
@@ -26,15 +28,18 @@ export default class Nav extends Component {
   renderScene(route, nav) {
     switch (route.name) {
       case 'Facebook':
-        return (<Facebook nav={nav} {...route.passProps} />)
+        return (<Facebook nav={nav} {...route.props} />)
       case 'Instagram':
-        return (<Instagram nav={nav} {...route.passProps} />);
+        return (<Instagram nav={nav} {...route.props} />);
       case 'Photo':
-        return (<Photo nav={nav} {...route.passProps} change={this.props.change} />)
+        return (<Photo nav={nav} {...route.props} change={this.props.change} />)
       case 'Gmail':
-        return  (<Gmail nav={nav} {...route.passProps} />)
+        return  (<Gmail nav={nav} {...route.props} />)
       case 'Settings':
-        return  (<Settings nav={nav} {...route.passProps} change={this.props.change} />)      
+        return  (<Settings nav={nav} {...route.props} change={this.props.change} />)      
+
+      case 'Friends':
+        return  (<Friends nav={nav} {...route.props} />)      
 
      }
   }

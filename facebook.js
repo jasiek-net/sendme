@@ -36,12 +36,15 @@ export default class Facebook extends Component {
 
   constructor(props) {
     super(props);
+
     this.state = {state: 'empty'}
     // this.img = props.user.picture.data.url;
     // this.username = props.user.name;
     // Cool stuff! https://facebook.github.io/react/docs/reusable-components.html#es6-classes
     this.user = this.user.bind(this);
-    this.friends = this.friends.bind(this);
+    this.login = this.login.bind(this);
+    this.pressFriends = this.pressFriends.bind(this);
+    this.fetchFriends = this.fetchFriends.bind(this);
     this.logout = this.logout.bind(this);
   }
 
@@ -49,61 +52,46 @@ export default class Facebook extends Component {
     Keychain.getInternetCredentials('facebook')
     .then(sec => {
       this.setState({state: 'logged'})
-      var token = sec.password
-      var userId = sec.username
-      var api = API.FB + 'me/friends?fields=name,id,picture&access_token=' + token;
-      console.log('API ', api);
-      fetch(api)
-        .then(res => res.json())
-        .then(res => {
-          var friends = res.data.map(a => {
-            return {
-              name: a.name,
-              foot: a.id,
-              add: false,
-              img: a.picture.data.url,
-              id: a.id
-            }
-          });
-          console.log('push to friends ', friends);
-          that.props.navigator.push({id: 'friends', friends, type: 'facebook'});
-        })
-        .catch(err => console.log('Facebook: fetch friends ', err));
-      })
+      this.fetchFriends(sec.password);
+    })
     .catch(err => {
-      console.log('Keychain: no credentials ', err);
       this.setState({state: 'login'})
     });
   }
 
-  friends() {
-    var that = this;
-    Keychain.getInternetCredentials('facebook')
-      .then(sec => {
-        var token = sec.password
-        var userId = sec.username
-        var api = API.FB + 'me/friends?fields=name,id,picture&access_token=' + token;
-        console.log('API ', api);
-        fetch(api)
-          .then(res => res.json())
-          .then(res => {
-            var friends = res.data.map(a => {
-              return {
-                name: a.name,
-                foot: a.id,
-                add: false,
-                img: a.picture.data.url,
-                id: a.id
-              }
-            });
-            console.log('push to friends ', friends);
-            that.props.navigator.push({id: 'friends', friends, type: 'facebook'});
-          })
-          .catch(err => console.log('Facebook: fetch friends ', err));
-        })
-        .catch(err => {
-          console.log('Keychain: no credentials ', err);
-        });
+
+  fetchFriends(token) {
+    // var api = API.FB + 'me/friends?fields=name,id,picture&access_token=' + token;
+    // fetch(api)
+    // .then(res => res.json())
+    // .then(res => {
+    //   this.friends = res.data.map(a => {
+    //     return {
+    //       name: a.name,
+    //       foot: a.id,
+    //       add: false,
+    //       img: a.picture.data.url,
+    //       id: a.id
+    //     }
+    //   });
+    //   const { store } = this.context;
+    //   store.dispatch({
+    //     type: 'FB_ADD',
+    //     list: this.friends,
+    //   })
+    // })
+    // .catch(err => console.log('Facebook: fetch friends ', err));
+  }
+
+
+  pressFriends() {
+    const state = this.context.store.getState();
+    this.props.nav.push({
+      name: 'Friends',
+      props: {
+        friends: state.facebook.friends
+      }
+    });
   }
 
   user() {
@@ -115,14 +103,15 @@ export default class Facebook extends Component {
     LoginManager.logInWithReadPermissions(['user_friends', 'user_photos'])
     .then(res => {
         if (res.isCancelled) {
-          alert('Facebook sign in was cancelled!');
+          this.setState({state: 'login'})
         } else {
           console.log(res);
           AccessToken.getCurrentAccessToken()
           .then(res => {
             console.log('Facebook sign in ', res);
-            Keychain.setInternetCredentials('facebook', 'username', res.accessToken);
-            this.setState({state: 'logged'});
+            Keychain.setInternetCredentials('facebook', 'username', res.accessToken)
+            .then(res => this.setState({state: 'logged'}))
+            .catch(err => console.log('Keychain error', err));
           })
         }
       },
@@ -131,12 +120,11 @@ export default class Facebook extends Component {
   }
 
   logout() {
-    var that = this;
     Alert.alert(
       'Facebook log out',
-      'Do you want to log out from your facebook account?',
+      'Do you want to log out from your Facebook account?',
       [
-        {text: 'Yes', onPress: () => { LoginManager.logOut(); that.props.navigator.pop() }},
+        {text: 'Yes', onPress: () => { LoginManager.logOut(); this.props.navigator.pop() }},
         {text: 'No'}
       ]
     )
@@ -167,7 +155,7 @@ export default class Facebook extends Component {
                 <Icon style={s.buttonArrow} name="angle-right"/>
               </View>
             </TouchableHighlight>
-            <TouchableHighlight onPress={this.friends} style={s.button}>
+            <TouchableHighlight onPress={this.pressFriends} style={s.button}>
               <View style={s.buttonView}>
                 <Icon style={s.buttonIcon} name="users"/>
                 <Text style={s.buttonText}>
@@ -189,13 +177,14 @@ export default class Facebook extends Component {
     }
   }
 }
+Facebook.contextTypes = {
+  store: React.PropTypes.object
+}
 
 const s = StyleSheet.create({
   cont: {
     flex: 1,
     flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
     backgroundColor: COL.bg,
   },
   user: {

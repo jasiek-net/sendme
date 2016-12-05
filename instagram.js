@@ -31,13 +31,15 @@ import {encode} from 'base-64'
 import Keychain from 'react-native-keychain';
 import RNFetchBlob from 'react-native-fetch-blob';
 
+import Empty from './Empty'
 
 export default class Instagram extends Component {
 
   constructor(props) {
     super(props);
-    this.img = props.user.data.profile_picture;
-    this.username = props.user.data.full_name;
+    this.state = {state: 'empty'}
+    // this.img = props.user.data.profile_picture;
+    // this.username = props.user.data.full_name;
     // Cool stuff! https://facebook.github.io/react/docs/reusable-components.html#es6-classes
     this.friends = this.friends.bind(this);
     this.user = this.user.bind(this);
@@ -103,6 +105,10 @@ export default class Instagram extends Component {
   }
 
   render() {
+    switch(this.state.state) {
+      case 'empty':
+        return <Empty />
+    }
     return (
       <View style={styles.container}>
         <View style={styles.user}>

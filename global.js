@@ -12,7 +12,7 @@ export const API = {
 	IN: IN_URL,
 	GM: GM_URL,
 
-	FB_friends: FB_URL + 'me/friends?fields=name,id,picture&access_token=',
+	FB_friends: FB_URL + 'me/friends?fields=name,id,picture&limit=1&access_token=',
 	IN_friends: IN_URL + 'users/self/follows?',
 }
 
