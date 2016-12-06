@@ -73,16 +73,6 @@ const s = StyleSheet.create({
     //           <Text style={s.userName}>{this.username}</Text>
     //         </View>)
 
-// const Menu = ({
-//   user,
-//   logout,
-//   friends,
-// }) => {
-//   console.log('Menu');
-//   console.log(user);
-//   return (<Text style={{color: 'red', fontSize: 50}}>CO JEST KURWA</Text>);
-// }
-
 const Menu = ({
 	user,
 	friends,

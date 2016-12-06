@@ -2,6 +2,10 @@ import Keychain from 'react-native-keychain';
 import { AccessToken } from 'react-native-fbsdk'
 import { API } from './Global'
 
+export const fetchData = (store) => {
+	// fetchFacebook(store.getState().facebook, store.dispatch);
+	fetchInstagram(store.getState().instagram, store.dispatch);
+}
 export const fetchToken = async (store) => {
   AccessToken.getCurrentAccessToken()
   .then(res => {
@@ -12,7 +16,7 @@ export const fetchToken = async (store) => {
       next,
     })
 	  // fetchFacebook(store.getState().facebook, store.dispatch);
-	  fetchInstagram(store.getState().instagram, store.dispatch);
+	  // fetchInstagram(store.getState().instagram, store.dispatch);
   })
   .catch(err => console.log('AccessToken error ', err));
 }
@@ -45,12 +49,6 @@ export const fetchFacebook = (state, dispatch) => {
   .catch(err => console.log('Facebook: fetch friends ', err))
 }
 
-// iga5b9ac8e834a4a11ba1738cf9b7c2269://authorize
-
-// iga5b9ac8e834a4a11ba1738cf9b7c2269
-
-// iga5b9ac8e834a4a11ba1738cf9b7c2269://callback
-// https://jonzee.me/login/callback
 export const fetchInstagram = (state, dispatch) => {
   Keychain.getInternetCredentials('instagram')
   .then(sec => {
@@ -81,9 +79,4 @@ export const fetchInstagram = (state, dispatch) => {
   .catch(err => {
     console.log('Keychain: no credentials ', err);
   });
-}
-
-export const fetchData = (store) => {
-	fetchFacebook(store);
-	fetchInstagram(store);
 }

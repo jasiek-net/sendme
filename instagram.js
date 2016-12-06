@@ -35,6 +35,8 @@ import Empty from './Empty'
 import Login from './Login'
 import Menu from './Menu'
 
+import { fetchInstagram } from './Requests'
+
 export default class Instagram extends Component {
 
   constructor(props) {
@@ -52,6 +54,8 @@ export default class Instagram extends Component {
   componentDidMount() {
     Keychain.getInternetCredentials('instagram')
     .then(sec => {
+      // const { store } = this.context;
+      // fetchInstagram(store.getState(), store.dispatch);
       this.setState({state: 'logged'})
     })
     .catch(err => {
@@ -62,13 +66,9 @@ export default class Instagram extends Component {
   user() {}
 
   friends() {
-    const state = this.context.store.getState();
     this.props.nav.push({
-      name: 'Friends',
+      name: 'FriendsInstagram',
       title: 'Instagram',
-      props: {
-        friends: state.instagram.friends
-      }
     });
   }
 

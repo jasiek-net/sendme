@@ -14,9 +14,7 @@ import {encode} from 'base-64'
 import Keychain from 'react-native-keychain';
 import RNFetchBlob from 'react-native-fetch-blob';
 
-import {API, COL, SIZ} from './Global';
-
-import { connect } from 'react-redux'
+import { API, COL, SIZ } from './Global';
 
 import { fetchFacebook } from './Requests';
 
@@ -49,7 +47,7 @@ const Row = ({ toggle, row }) => (
   </View>
 )
 
-class Comp extends Component {
+export default class Friends extends Component {
 
   constructor(props) {
     super(props);
@@ -105,35 +103,6 @@ class Comp extends Component {
     );
   }
 }
-
-const mapStateToProps = (state) => {
-  return {
-    friends: state.facebook.friends,
-    next: state.facebook.next,
-    store: state.facebook,
-  }
-}
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    toggle: id => {
-      dispatch({
-        type: 'FB_TOGGLE',
-        id
-      })
-    },
-    fetch: state => {
-      fetchFacebook(state, dispatch)
-    }
-  }
-}
-
-const Friends = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Comp);
-
-export default Friends;
 
 const styles = StyleSheet.create({
   list: {

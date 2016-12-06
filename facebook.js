@@ -57,13 +57,9 @@ export default class Facebook extends Component {
   user() {}
 
   friends() {
-    const state = this.context.store.getState();
     this.props.nav.push({
-      name: 'Friends',
+      name: 'FriendsFacebook',
       title: 'Facebook',
-      props: {
-        friends: state.facebook.friends
-      }
     });
   }
 

@@ -38,8 +38,7 @@ export default class Main extends Component {
     const dispatch = this.context.store.dispatch;
     loadAsync(dispatch)
     .then(res => {
-      console.log('wqdqwdqwdqw', res)
-      fetchToken(this.context.store);
+      fetchData(this.context.store)
     })
   }
 
