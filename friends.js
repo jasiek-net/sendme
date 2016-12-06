@@ -47,7 +47,7 @@ const Row = ({ toggle, row }) => (
   </View>
 )
 
-export default class Friends extends Component {
+class FriendsPresentational extends Component {
 
   constructor(props) {
     super(props);
@@ -103,6 +103,40 @@ export default class Friends extends Component {
     );
   }
 }
+
+import { connect } from 'react-redux'
+
+const mapStateToProps = (state, props) => {
+  console.log('mapStateToProps');
+  console.log(props)
+  return {
+    friends: state[props.type].friends,
+    next: state[props.type].next,
+    store: state[props.type],
+  }
+}
+
+// ACTION?
+const toggle = (type, id) => ({ type, id })
+
+
+const mapDispatchToProps = (dispatch, props) => {
+  return {
+    toggle: id => {
+      dispatch(toggle(props.toggle, id))
+    },
+    fetch: state => {
+      props.fetch(state, dispatch)
+    }
+  }
+}
+
+const Friends = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(FriendsPresentational);
+
+export default Friends;
 
 const styles = StyleSheet.create({
   list: {

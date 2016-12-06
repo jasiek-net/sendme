@@ -7,6 +7,8 @@ const FB_URL = 'https://graph.facebook.com/';
 const IN_URL = 'https://api.instagram.com/v1/';
 const GM_URL = '';
 
+export const GM_CLIENT_ID = '725209563882-v025p7u4cl84iplutoo4n0q51nnsbkoi.apps.googleusercontent.com'
+
 const IN_CLIENT_ID = 'a5b9ac8e834a4a11ba1738cf9b7c2269';
 const IN_REDIRECT_URI = 'http://iga5b9ac8e834a4a11ba1738cf9b7c2269.sendme';
 const IN_SCOPE = 'follower_list+public_content';

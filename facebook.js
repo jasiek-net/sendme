@@ -31,6 +31,8 @@ import Empty from './Empty'
 import Login from './Login'
 import Menu from './Menu'
 
+import { fetchFacebook } from './Requests'
+
 export default class Facebook extends Component {
 
   constructor(props) {
@@ -58,8 +60,13 @@ export default class Facebook extends Component {
 
   friends() {
     this.props.nav.push({
-      name: 'FriendsFacebook',
+      name: 'Friends',
       title: 'Facebook',
+      props: {
+        type: 'facebook',
+        toggle: 'FB_TOGGLE',
+        fetch: fetchFacebook,
+      }
     });
   }
 

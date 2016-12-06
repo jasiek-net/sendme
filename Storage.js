@@ -1,4 +1,14 @@
-import { AsyncStorage } from 'react-native';
+import { AsyncStorage } from 'react-native'
+
+import {
+  combineReducers,
+  createStore,
+} from 'redux'
+
+
+import throttle from 'lodash/throttle'
+
+import { facebook, instagram } from './Reducers'
 import { API } from './Global'
 
 export const loadState = () => {
@@ -14,7 +24,6 @@ export const loadState = () => {
       next: API.IN_friends,
     },
   }
-  console.log('loadState ', state);
   return state;
 }
 
@@ -45,3 +54,27 @@ export const saveState = async (data) => {
     console.log('saveState error ', err);
   }
 }
+
+export const configureStore = () => {
+
+  const reducers = combineReducers({
+    facebook,
+    instagram
+  })
+  
+  const store = createStore(reducers, loadState());
+
+  store.subscribe(throttle(() => {
+    const state = store.getState();
+    saveState({
+      facebook: state.facebook.follows,
+      instagram: state.instagram.follows,
+    });
+  }, 1000));
+
+  return store
+}
+
+
+
+

@@ -1,16 +1,7 @@
 import React, {Component} from 'react';
-import {GoogleSignin, GoogleSigninButton} from 'react-native-google-signin';
-
-import {
-  AccessToken,
-  LoginManager,
-  GraphRequest,
-  GraphRequestManager
-} from 'react-native-fbsdk';
 
 import {
   Alert,
-  AppRegistry,
   StyleSheet,
   Text,
   IntentAndroid,
@@ -23,112 +14,112 @@ import {
 
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-import gg from './android/app/google-services.json';
-import {API, COL} from './Global';
+import {API, COL, GM_CLIENT_ID} from './Global';
 
 import {encode} from 'base-64'
 import Keychain from 'react-native-keychain';
 import RNFetchBlob from 'react-native-fetch-blob';
 
+import { GoogleSignin } from 'react-native-google-signin';
+
+import Empty from './Empty'
+import Login from './Login'
+import Menu from './Menu'
+
+import gg from './android/app/google-services.json';
 
 export default class Gmail extends Component {
 
   constructor(props) {
     super(props);
-    console.log(props.user);
-    this.img = props.user.picture.data.url;
-    this.username = props.user.name;
-    // Cool stuff! https://facebook.github.io/react/docs/reusable-components.html#es6-classes
+    this.state = {state: 'empty'}
+    // this.img = props.user.picture.data.url;
+    // this.username = props.user.name;
+
     this.user = this.user.bind(this);
-    this.friends = this.friends.bind(this);
+    this.login = this.login.bind(this);
     this.logout = this.logout.bind(this);
+    this.friends = this.friends.bind(this);
   }
 
-  friends() {
-    var that = this;
-    Keychain.getInternetCredentials('facebook')
-      .then(sec => {
-        var token = sec.password
-        var userId = sec.username
-        var api = API.FB + 'me/friends?fields=name,id,picture&access_token=' + token;
-        console.log('API ', api);
-        fetch(api)
-          .then(res => res.json())
-          .then(res => {
-            var friends = res.data.map(a => {
-              return {
-                name: a.name,
-                foot: a.id,
-                add: false,
-                img: a.picture.data.url,
-                id: a.id
-              }
-            });
-            console.log('push to friends ', friends);
-            that.props.navigator.push({id: 'friends', friends, type: 'facebook'});
-          })
-          .catch(err => console.log('Facebook: fetch friends ', err));
-        })
-        .catch(err => {
-          console.log('Keychain: no credentials ', err);
+  componentDidMount() {
+    Keychain.getInternetCredentials('gmail')
+    .then(sec => {
+      this.setState({state: 'logged'})
+    })
+    .catch(err => {
+      this.setState({state: 'login'})
+    });
+  }
+
+  user() {}
+
+  friends() {}
+
+  login() {
+    this.setState({ state: 'empty' })
+    GoogleSignin.hasPlayServices({ autoResolve: true }).then(() => {
+      GoogleSignin.configure({
+        scopes: ["https://www.googleapis.com/auth/gmail.send"],
+        offlineAccess: false,
+        iosClientId: GM_CLIENT_ID,
+      })
+      .then(() => {
+        GoogleSignin.signIn()
+        .then(res => {
+          var pass = res.accessToken;
+          var user = res.id;
+          // const user = {
+          //   name: res.name,
+          //   foot: res.email,
+          //   img: res.photo,
+          //   add: false,
+          // }
+          Keychain.setInternetCredentials('gmail', user, pass)
+          .then(res => this.setState({state: 'logged'}))
+          .catch(err => console.log('Keychain error', err));
         });
-  }
-
-  user() {
-
+      })
+      .catch(err => console.log('Main: gmail sign in error ', err));
+    })
+    .catch(err => console.log("Play services error", err.code, err.message))
   }
 
   logout() {
-    var that = this;
     Alert.alert(
-      'Facebook log out',
-      'Do you want to log out from your facebook account?',
+      'Gmail log out',
+      'Do you want to log out from Gmail account?',
       [
-        {text: 'Yes', onPress: () => { LoginManager.logOut(); that.props.navigator.pop() }},
+        {text: 'Yes', onPress: () => {
+            this.setState({ state: 'login' })
+            GoogleSignin.signOut()
+            Keychain.resetInternetCredentials('gmail')
+            .catch(err => console.log('Keychain error ', err));
+          }
+        },
         {text: 'No'}
       ]
-    )
+    );
+
   }
 
   render() {
-    return (
-      <View style={styles.container}>
-        <View style={styles.user}>
-          <Image
-            source={{uri: this.img}}
-            resizeMode='contain'
-            style={styles.userImg} />
-          <Text style={styles.userName}>{this.username}</Text>
-        </View>
-        <TouchableHighlight onPress={this.user} style={styles.button}>
-          <View style={styles.buttonView}>
-            <Icon style={styles.buttonIcon} name="user"/>
-            <Text style={styles.buttonText}>
-              Your profile
-            </Text>
-            <Icon style={styles.buttonArrow} name="angle-right"/>
-          </View>
-        </TouchableHighlight>
-        <TouchableHighlight onPress={this.friends} style={styles.button}>
-          <View style={styles.buttonView}>
-            <Icon style={styles.buttonIcon} name="users"/>
-            <Text style={styles.buttonText}>
-              Friends
-            </Text>
-            <Icon style={styles.buttonArrow} name="angle-right"/>
-          </View>
-        </TouchableHighlight>
-        <TouchableHighlight onPress={this.logout} style={styles.button}>
-          <View style={styles.buttonView}>
-            <Icon style={styles.buttonIcon} name="sign-out"/>
-            <Text style={styles.buttonText}>
-              Log out
-            </Text>
-            <Icon style={styles.buttonArrow} name="angle-right"/>
-          </View>
-        </TouchableHighlight>
-      </View>
-    );
+    switch(this.state.state) {
+      case 'empty':
+        return (<Empty />)
+      case 'login':
+        return (
+          <Login
+            icon="google-plus-square"
+            type="Gmail"
+            login={this.login} />)
+      case 'logged':
+        return (
+          <Menu
+            user={this.user}
+            logout={this.logout}
+            friends={this.friends} />)
+    }
   }
 }
 

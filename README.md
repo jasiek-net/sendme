@@ -30,10 +30,10 @@ alias and_log="react-native log-android"
 - [ ] both: [rethink react](https://facebook.github.io/react/docs/thinking-in-react.html) one more time 
 - [ ] iOS: 
 - [ ] iOS: styling fb/insta/gmail view
-- [ ] iOS: Gmail SDK
 - [ ] both: add profile info (fetch from network)
 - [ ] both: Instagram friends with pagination
-- [ ] both: how to deal with FriendsFacebook/FriendsInstagram - one component?
+- [x] iOS: Gmail SDK
+- [x] both: one component for FriendsFacebook/FriendsInstagram
 - [x] both: Add redux to project
 - [x] iOS: test background fetch (protip: Xcode > Debug > Simulate Background Fetch)
 - [x] iOS: find framework for background tasks [react-native-background-fetch](https://github.com/transistorsoft/react-native-background-fetch)

@@ -30,7 +30,7 @@ export default class Main extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {tab: 'Instagram'}
+    this.state = {tab: 'Gmail'}
     this.change = this.change.bind(this);
   }
 
@@ -84,10 +84,10 @@ export default class Main extends Component {
             </TabNavigator.Item>
             <TabNavigator.Item
               renderIcon={this.renderIcon.bind(null, 'google-plus-square')}
-              renderSelectedIcon={this.renderIcon.bind(null, 'google-plus-square')}
-              selected={this.state.tab === 'gmail'}
-              onPress={() => this.change('gmail')}>
-              <Navigator name="gmail" change={this.change} />
+              renderSelectedIcon={this.renderIcon.bind(null, 'google-plus-square', COL.green)}
+              selected={this.state.tab === 'Gmail'}
+              onPress={() => this.change('Gmail')}>
+              <Navigator name="Gmail" />
             </TabNavigator.Item>
             <TabNavigator.Item
               renderIcon={this.renderIcon.bind(null, 'cogs')}

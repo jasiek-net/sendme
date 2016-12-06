@@ -19,9 +19,6 @@ import Gmail from './Gmail';
 import Settings from './Settings';
 
 import Friends from './Friends';
-import FriendsFacebook from './FriendsFacebook';
-import FriendsInstagram from './FriendsInstagram';
-
 
 export default class Nav extends Component {
   constructor(props) {
@@ -50,12 +47,12 @@ export default class Nav extends Component {
       case 'Settings':
         return  (<Settings nav={nav} {...route.props} change={this.props.change} />)      
 
-      // case 'Friends':
-      //   return  (<Friends nav={nav} {...route.props} />)
-      case 'FriendsInstagram':
-        return  (<FriendsInstagram nav={nav} {...route.props} />)
-      case 'FriendsFacebook':
-        return  (<FriendsFacebook nav={nav} {...route.props} />)
+      case 'Friends':
+        return  (<Friends nav={nav} {...route.props} />)
+      // case 'FriendsInstagram':
+      //   return  (<FriendsInstagram nav={nav} {...route.props} />)
+      // case 'FriendsFacebook':
+      //   return  (<FriendsFacebook nav={nav} {...route.props} />)
 
       case 'WebView':
         return (<WebView nav={nav} {...route.props} />)

@@ -24,7 +24,6 @@ import {
 
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-
 import {encode} from 'base-64'
 import Keychain from 'react-native-keychain';
 import RNFetchBlob from 'react-native-fetch-blob';
@@ -67,8 +66,13 @@ export default class Instagram extends Component {
 
   friends() {
     this.props.nav.push({
-      name: 'FriendsInstagram',
+      name: 'Friends',
       title: 'Instagram',
+      props: {
+        type: 'instagram',
+        toggle: 'IN_TOGGLE',
+        fetch: fetchInstagram,
+      }
     });
   }
 
