@@ -1,8 +1,17 @@
 'use strict';
 
-import React, {Component} from 'react';
-import {Navigator} from 'react-native';
+import React, { Component } from 'react';
+import {
+  Navigator,
+  StyleSheet,
+  TouchableHighlight,
+  Text,
+  WebView,
+} from 'react-native';
 
+import { Button } from 'react-native-vector-icons/FontAwesome';
+
+import { COL, SIZ } from './Global';
 import Facebook from './Facebook';
 import Instagram from './Instagram';
 import Photo from './Photo';
@@ -39,8 +48,9 @@ export default class Nav extends Component {
         return  (<Settings nav={nav} {...route.props} change={this.props.change} />)      
 
       case 'Friends':
-        return  (<Friends nav={nav} {...route.props} />)      
-
+        return  (<Friends nav={nav} {...route.props} />)
+      case 'WebView':
+        return (<WebView nav={nav} {...route.props} />)
      }
   }
 
@@ -49,8 +59,60 @@ export default class Nav extends Component {
         <Navigator
           ref='nav'
           style={{flex:1}}
-          initialRoute={{ name: this.props.name }}
-          renderScene={ this.renderScene } />
+          initialRoute={{ name: this.props.name, title: this.props.name }}
+          renderScene={ this.renderScene }
+          navigationBar={Navbar} />
       );
   }
 }
+
+// Navigation Bar
+
+const s = StyleSheet.create({
+  nav: {
+    height: SIZ.navall,
+    backgroundColor: COL.bg,
+    borderBottomWidth: 1,
+    borderBottomColor: COL.brd_sml,    
+  },
+  btn: {
+    marginLeft: 5,
+  },
+  ico: {
+    color: COL.txt,
+  },
+  title: {
+    marginTop: 10,
+    color: COL.txt,
+    fontSize: 22,
+  },
+})
+
+const Navbar = (
+  <Navigator.NavigationBar
+    style={ s.nav }
+    routeMapper={{
+      LeftButton: (route, navigator, index, navState) => {
+        if (index === 0) {
+          return null
+        }
+        return (
+            <Button
+              style={s.btn}
+              size={30}
+              backgroundColor='transparent'
+              name='angle-left'
+              iconStyle={s.btn}
+              onPress={() => navigator.pop()}
+            />)
+      },
+      Title: (route, navigator, index, navState) => {
+        return (<Text style={ s.title }>{ route.title.capitalize() }</Text>)
+      },
+      RightButton: () => {
+        return null
+      },
+    }}
+  />
+);
+

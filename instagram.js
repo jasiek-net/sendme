@@ -18,20 +18,22 @@ import {
   Linking,
   View,
   Navigator,
-  Image
+  Image,
+  WebView,
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-import gg from './android/app/google-services.json';
-
-import {API, COL} from './Global';
 
 import {encode} from 'base-64'
 import Keychain from 'react-native-keychain';
 import RNFetchBlob from 'react-native-fetch-blob';
 
+import { API, SIZ } from './Global'
+
 import Empty from './Empty'
+import Login from './Login'
+import Menu from './Menu'
 
 export default class Instagram extends Component {
 
@@ -40,63 +42,58 @@ export default class Instagram extends Component {
     this.state = {state: 'empty'}
     // this.img = props.user.data.profile_picture;
     // this.username = props.user.data.full_name;
-    // Cool stuff! https://facebook.github.io/react/docs/reusable-components.html#es6-classes
-    this.friends = this.friends.bind(this);
     this.user = this.user.bind(this);
+    this.login = this.login.bind(this);
     this.logout = this.logout.bind(this);
+    this.friends = this.friends.bind(this);
+    this.handleUrl = this.handleUrl.bind(this);
   }
 
-  friends_fb() {
-
+  componentDidMount() {
+    Keychain.getInternetCredentials('instagram')
+    .then(sec => {
+      this.setState({state: 'logged'})
+    })
+    .catch(err => {
+      this.setState({state: 'login'})
+    });
   }
 
-  friends_insta() {
-
-  }
+  user() {}
 
   friends() {
-    var that = this;
-    Keychain.getInternetCredentials('instagram')
-      .then(sec => {
-        var token = sec.password
-        var api = API.IN + 'users/self/follows?' + token;
-        fetch(api)
-          .then(res => res.json())
-          .then(res => {
-            var friends = res.data.map(a => {
-              return {
-                name: a.username,
-                foot: a.full_name,
-                add: false,
-                img: a.profile_picture,
-                id: a.id
-              }
-            });
-            that.props.navigator.push({id: 'friends', friends, type: 'instagram'});
-          })
-          .catch(err => console.log('Instagram: fetch friends ', err));
-        })
-        .catch(err => {
-          console.log('Keychain: no credentials ', err);
-        });
+    const state = this.context.store.getState();
+    this.props.nav.push({
+      name: 'Friends',
+      title: 'Instagram',
+      props: {
+        friends: state.instagram.friends
+      }
+    });
   }
 
-  user() {
-
+  login() {
+    this.setState({ state: 'empty' })
+    this.props.nav.push({
+      name: 'WebView',
+      title: 'Instagram Login',
+      props: {
+        source: { uri: API.IN_LOGIN },
+        onNavigationStateChange: this.handleUrl,
+        style: { marginTop: SIZ.navall }
+      }
+    });
   }
 
   logout() {
-    var that = this;
     Alert.alert(
       'Instagram log out',
-      'Do you want to log out from your instagram account?',
+      'Do you want to log out from your Instagram account?',
       [
-        {text: 'Yes', onPress: () => { 
-          Keychain.resetInternetCredentials('instagram');
-          var url = 'https://instagram.com/accounts/logout';
-          Linking.openURL(url)
-          .catch(err => console.log('Instagram: logout error ', err));
-          that.props.navigator.pop();
+        {text: 'Yes', onPress: () => {
+            this.setState({ state: 'login' })
+            Keychain.resetInternetCredentials('instagram')
+            .catch(err => console.log('Keychain error ', err));
           }
         },
         {text: 'No'}
@@ -104,99 +101,38 @@ export default class Instagram extends Component {
     )
   }
 
+  handleUrl(event) {
+    let url = event.url;
+    console.log(url)
+    if (url && url.indexOf('#') > -1) {
+      this.props.nav.pop();
+      var user = 'username';
+      var pass = url.split('#')[1];
+      Keychain.setInternetCredentials('instagram', user, pass)
+      .then(res => this.setState({ state: 'logged' }))
+      .catch(err => console.log('Keychain error ', err));
+    }
+  }
+
   render() {
     switch(this.state.state) {
       case 'empty':
-        return <Empty />
+        return (<Empty />)
+      case 'login':
+        return (
+          <Login
+            icon='instagram'
+            type='Instagram'
+            login={this.login} />)
+      case 'logged':
+        return (
+          <Menu
+            user={this.user}
+            logout={this.logout}
+            friends={this.friends} />)
     }
-    return (
-      <View style={styles.container}>
-        <View style={styles.user}>
-          <Image
-            source={{uri: this.img}}
-            resizeMode='contain'
-            style={styles.userImg} />
-          <Text style={styles.userName}>{this.username}</Text>
-        </View>
-        <TouchableHighlight onPress={this.user} style={styles.button}>
-          <View style={styles.buttonView}>
-            <Icon style={styles.buttonIcon} name="user"/>
-            <Text style={styles.buttonText}>
-              Your profile
-            </Text>
-            <Icon style={styles.buttonArrow} name="angle-right"/>
-          </View>
-        </TouchableHighlight>
-        <TouchableHighlight onPress={this.friends} style={styles.button}>
-          <View style={styles.buttonView}>
-            <Icon style={styles.buttonIcon} name="users"/>
-            <Text style={styles.buttonText}>
-              Friends
-            </Text>
-            <Icon style={styles.buttonArrow} name="angle-right"/>
-          </View>
-        </TouchableHighlight>
-        <TouchableHighlight onPress={this.logout} style={styles.button}>
-          <View style={styles.buttonView}>
-            <Icon style={styles.buttonIcon} name="sign-out"/>
-            <Text style={styles.buttonText}>
-              Log out
-            </Text>
-            <Icon style={styles.buttonArrow} name="angle-right"/>
-          </View>
-        </TouchableHighlight>
-      </View>
-    );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: COL.bg,
-  },
-  user: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    height: 70,
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: COL.brd_sml,
-  },
-  userImg: {
-    height: 50,
-    width: 50,
-    borderRadius: 25,
-    marginRight: 10,
-  },
-  userName: {
-    fontSize: 20,
-    color: COL.btn_foot,
-  },
-  button: {
-    padding: 14,
-    backgroundColor: COL.btn_bg,
-    borderBottomWidth: 1,
-    borderBottomColor: COL.brd_sml,
-  },
-  buttonView: {
-    flexDirection: 'row',
-    alignItems: 'center'
-  },
-  buttonText: {
-    color: COL.btn_head,
-    fontSize:20,
-    flex: 1,
-  },
-  buttonIcon: {
-    color: COL.btn_txt,
-    fontSize: 20,
-    textAlign: 'center',
-    width: 30,
-    marginRight: 10,
-  },
-  buttonArrow: {
-    color: COL.btn_txt,
-    fontSize: 20,
-  },
-});
+Instagram.contextTypes = {
+  store: React.PropTypes.object
+}

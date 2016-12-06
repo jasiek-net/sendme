@@ -7,6 +7,10 @@ const FB_URL = 'https://graph.facebook.com/';
 const IN_URL = 'https://api.instagram.com/v1/';
 const GM_URL = '';
 
+const IN_CLIENT_ID = 'a5b9ac8e834a4a11ba1738cf9b7c2269';
+const IN_REDIRECT_URI = 'http://iga5b9ac8e834a4a11ba1738cf9b7c2269.sendme';
+const IN_SCOPE = 'follower_list+public_content';
+
 export const API = {
 	FB: FB_URL,
 	IN: IN_URL,
@@ -14,6 +18,12 @@ export const API = {
 
 	FB_friends: FB_URL + 'me/friends?fields=name,id,picture&limit=1&access_token=',
 	IN_friends: IN_URL + 'users/self/follows?',
+
+  IN_LOGIN: `https://api.instagram.com/oauth/authorize/` + 
+            `?client_id=${ IN_CLIENT_ID }&redirect_uri=${ IN_REDIRECT_URI }` +
+            `&response_type=token&scope=${ IN_SCOPE }`,
+
+  IN_LOGOUT: 'https://instagram.com/accounts/logout',
 }
 
 export const COL = {
@@ -103,6 +113,8 @@ let { height, width } = Dimensions.get('window');
 // graphics width === 750
 export const SIZ = {
 // size of photos sending to backend
+  login: width*2/3,
+
   newWidth: 306,
   newHeight: 408,
 

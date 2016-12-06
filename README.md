@@ -39,6 +39,8 @@ alias and_log="react-native log-android"
 - what with AccessToken.getCurrent - how often trigger and where?
 
 
+#### TO LEARN
+- http://redux.js.org/docs/basics/UsageWithReact.html
 
 
 1. REDUX

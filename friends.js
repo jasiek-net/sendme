@@ -14,7 +14,7 @@ import {encode} from 'base-64'
 import Keychain from 'react-native-keychain';
 import RNFetchBlob from 'react-native-fetch-blob';
 
-import {API, COL} from './Global';
+import {API, COL, SIZ} from './Global';
 
 import { connect } from 'react-redux'
 
@@ -138,6 +138,7 @@ export default Friends;
 const styles = StyleSheet.create({
   list: {
     backgroundColor: COL.bg,
+    paddingTop: SIZ.navall,
   },
   load: {
     backgroundColor: 'red',

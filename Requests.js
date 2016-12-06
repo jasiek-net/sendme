@@ -1,3 +1,4 @@
+import Keychain from 'react-native-keychain';
 import { AccessToken } from 'react-native-fbsdk'
 import { API } from './Global'
 
@@ -10,7 +11,8 @@ export const fetchToken = async (store) => {
       type: 'FB_NEXT',
       next,
     })
-	  fetchFacebook(store.getState().facebook, store.dispatch);
+	  // fetchFacebook(store.getState().facebook, store.dispatch);
+	  fetchInstagram(store.getState().instagram, store.dispatch);
   })
   .catch(err => console.log('AccessToken error ', err));
 }
@@ -43,8 +45,42 @@ export const fetchFacebook = (state, dispatch) => {
   .catch(err => console.log('Facebook: fetch friends ', err))
 }
 
-export const fetchInstagram = () => {
-  
+// iga5b9ac8e834a4a11ba1738cf9b7c2269://authorize
+
+// iga5b9ac8e834a4a11ba1738cf9b7c2269
+
+// iga5b9ac8e834a4a11ba1738cf9b7c2269://callback
+// https://jonzee.me/login/callback
+export const fetchInstagram = (state, dispatch) => {
+  Keychain.getInternetCredentials('instagram')
+  .then(sec => {
+    var token = sec.password
+    var api = API.IN + 'users/self/follows?' + token;
+    fetch(api)
+    .then(res => res.json())
+    .then(res => {
+    	console.log('insta fetch');
+    	console.log(res);
+      var friends = res.data.map(a => {
+        return {
+          name: a.username,
+          foot: a.full_name,
+          add: state.follows.indexOf(a.id) > -1,
+          img: a.profile_picture,
+          id: a.id
+        }
+      });
+      dispatch({
+      	type: 'IN_FETCH',
+      	list: friends,
+      	next: 'blabla'
+      })
+    })
+    .catch(err => console.log('Instagram: fetch friends ', err));
+  })
+  .catch(err => {
+    console.log('Keychain: no credentials ', err);
+  });
 }
 
 export const fetchData = (store) => {

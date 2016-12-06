@@ -104,6 +104,18 @@ export const instagram = (state = {}, action) => {
       return state.concat(action.list);
     case 'IN_TOGGLE':
       return toggle(state, action);
+
+    case 'IN_FETCH':
+      var nextState = {
+        friends: state.friends.concat(action.list),
+        follows: state.follows,
+        next: action.next,
+      }
+      console.log('IN_FETCH');
+      console.log(nextState);
+      return nextState
+
+
     default:
       return state;
   }

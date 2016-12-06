@@ -3,16 +3,19 @@
 import React, { Component } from 'react';
 import {
   AppRegistry,
+  Linking,
   StyleSheet,
   StatusBar,
   View
 } from 'react-native';
 
+import Keychain from 'react-native-keychain';
+
 import Icon from 'react-native-vector-icons/FontAwesome';
 import TabNavigator from 'react-native-tab-navigator';
 // import Keychain from 'react-native-keychain';
 
-import {API, COL, SIZ} from './Global'
+import { API, COL, SIZ } from './Global'
 import Navigator from './Navigator'
 // import Login from './Login';
 import Worker from './Worker'
@@ -27,7 +30,7 @@ export default class Main extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {tab: 'Facebook'}
+    this.state = {tab: 'Instagram'}
     this.change = this.change.bind(this);
   }
 
@@ -67,10 +70,10 @@ export default class Main extends Component {
             </TabNavigator.Item>
             <TabNavigator.Item
               renderIcon={this.renderIcon.bind(null, 'instagram')}
-              renderSelectedIcon={this.renderIcon.bind(null, 'instagram')}
-              selected={this.state.tab === 'instagram'}
-              onPress={() => this.change('instagram')}>
-              <Navigator name="instagram" />
+              renderSelectedIcon={this.renderIcon.bind(null, 'instagram', COL.green)}
+              selected={this.state.tab === 'Instagram'}
+              onPress={() => this.change('Instagram')}>
+              <Navigator name="Instagram" />
             </TabNavigator.Item>
             <TabNavigator.Item
               renderIcon={this.renderIcon.bind(null, 'camera')}
