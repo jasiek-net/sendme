@@ -5,10 +5,9 @@ import {
   createStore,
 } from 'redux'
 
-
 import throttle from 'lodash/throttle'
-
 import { facebook, instagram } from './Reducers'
+import { fetchData } from './Requests';
 import { API } from './Global'
 
 export const loadState = () => {
@@ -27,22 +26,25 @@ export const loadState = () => {
   return state;
 }
 
-export const loadAsync = async (dispatch) => {
-  const data = await AsyncStorage.getItem('store');
-  const store = JSON.parse(data);
-  console.log('loadAsync ', store);
-  if (store && store.facebook) {
-    dispatch({
+export const loadAsync = async (store) => {
+  console.log('loadAsync triggered');
+  var data = await AsyncStorage.getItem('store');
+  data = JSON.parse(data);
+  if (data && data.facebook) {
+    store.dispatch({
       type: 'INIT_FACEBOOK',
-      list: store.facebook,
+      list: data.facebook,
     });
   }
-  if (store && store.instagram) {  
-    dispatch({
+  if (data && data.instagram) {  
+    store.dispatch({
       type: 'INIT_INSTAGRAM',
-      list: store.instagram,
+      list: data.instagram,
     });
   }
+  console.log('load AsyncStorage');
+  await fetchData(store);
+  return 'HURRA!'
 }
 
 export const saveState = async (data) => {
@@ -71,6 +73,8 @@ export const configureStore = () => {
       instagram: state.instagram.follows,
     });
   }, 1000));
+
+  loadAsync(store).then(res => console.log('End of fetching data!!!', res));
 
   return store
 }

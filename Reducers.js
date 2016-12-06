@@ -56,6 +56,7 @@ const toggle = (state, action) => {
 
 export const facebook = (state = {}, action) => {
   switch(action.type) {
+
     case 'INIT_FACEBOOK':
       console.log('INIT_FACEBOOK');
       console.log(state);
@@ -63,15 +64,6 @@ export const facebook = (state = {}, action) => {
         ...state,
         follows: action.list
       }
-
-    case 'FB_NEXT':
-      var nextState = {
-        ...state,
-        next: action.next,
-      }
-      console.log('FB_NEXT');
-      console.log(nextState);
-      return nextState;
 
     case 'FB_FETCH':
       var nextState = {
@@ -88,6 +80,7 @@ export const facebook = (state = {}, action) => {
       console.log('FB_TOGGLE');
       console.log(nextState);
       return nextState;
+
     default:
       return state;
   }
@@ -95,13 +88,16 @@ export const facebook = (state = {}, action) => {
 
 export const instagram = (state = {}, action) => {
   switch(action.type) {
+
     case 'INIT_INSTAGRAM':
       return {
         ...state,
         follows: action.list
       }
+
     case 'IN_ADD':
       return state.concat(action.list);
+
     case 'IN_TOGGLE':
       return toggle(state, action);
 
@@ -114,8 +110,7 @@ export const instagram = (state = {}, action) => {
       console.log('IN_FETCH');
       console.log(nextState);
       return nextState
-
-
+      
     default:
       return state;
   }

@@ -9,22 +9,12 @@ import {
   View
 } from 'react-native';
 
-import Keychain from 'react-native-keychain';
-
 import Icon from 'react-native-vector-icons/FontAwesome';
 import TabNavigator from 'react-native-tab-navigator';
-// import Keychain from 'react-native-keychain';
 
-import { API, COL, SIZ } from './Global'
+import { COL, SIZ } from './Global'
 import Navigator from './Navigator'
-// import Login from './Login';
 import Worker from './Worker'
-
-// import Blur from './Blur';
-// import Test from './Test';
-
-import { loadAsync } from './Storage'
-import { fetchData, fetchToken } from './Requests'
 
 export default class Main extends Component {
 
@@ -32,14 +22,6 @@ export default class Main extends Component {
     super(props);
     this.state = {tab: 'Gmail'}
     this.change = this.change.bind(this);
-  }
-
-  componentDidMount() {
-    const dispatch = this.context.store.dispatch;
-    loadAsync(dispatch)
-    .then(res => {
-      fetchData(this.context.store)
-    })
   }
 
   change(state) {
