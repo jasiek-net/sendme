@@ -19,23 +19,24 @@ alias and_log="react-native log-android"
 
 #### TODO
 
-[ ] iOS: try to set specific hours for background tasks, [tutorial](https://possiblemobile.com/20/09/ios-7-background-fetch/)   
-[ ] iOS: trigger fetch every 15 minutes, check for hours in async storage   
-[ ] both: implement new design for tabbar   
-[ ] both: module with camera and gallery   
-[ ] both: check why gmail is losing sended emails    
-[ ] Android: find framework for background tasks/background fetch (workers, alarmmanager, timer, etc.)   
-[ ] Android: test background fetch   
-[ ] both: [rethink react](https://facebook.github.io/react/docs/thinking-in-react.html) one more time   
-[ ] iOS:   
-[ ] iOS: styling fb/insta/gmail view   
-[ ] iOS: Gmail SDK   
-[ ] both: add profile info (fetch from network)   
-[ ] both: Instagram friends with pagination   
-[ ] both: how to deal with FriendsFacebook/FriendsInstagram - one component?   
-[x] both: Add redux to project   
-[x] iOS: test background fetch (protip: Xcode > Debug > Simulate Background Fetch)   
-[x] iOS: find framework for background tasks [react-native-background-fetch](https://github.com/transistorsoft/react-native-background-fetch)   
+- [ ] iOS: try to set specific hours for background tasks, [tutorial](https://possiblemobile.com/2013/09/ios-7-background-fetch/)
+- [ ] iOS: trigger fetch every 15 minutes, check for hours in async storage
+- [ ] both: implement new design for tabbar
+- [ ] both: module with camera and gallery
+- [ ] both: check why gmail is losing sended emails
+- [ ] Android: find framework for background tasks/background fetch (workers, alarmmanager, timer, etc.)
+- [ ] Android: test background fetch
+
+- [ ] both: [rethink react](https://facebook.github.io/react/docs/thinking-in-react.html) one more time 
+- [ ] iOS: 
+- [ ] iOS: styling fb/insta/gmail view
+- [ ] iOS: Gmail SDK
+- [ ] both: add profile info (fetch from network)
+- [ ] both: Instagram friends with pagination
+- [ ] both: how to deal with FriendsFacebook/FriendsInstagram - one component?
+- [x] both: Add redux to project
+- [x] iOS: test background fetch (protip: Xcode > Debug > Simulate Background Fetch)
+- [x] iOS: find framework for background tasks [react-native-background-fetch](https://github.com/transistorsoft/react-native-background-fetch)
 
 
 #### FAQ
