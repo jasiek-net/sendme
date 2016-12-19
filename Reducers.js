@@ -1,5 +1,4 @@
-// import expect from 'expect'
-
+'use strict'
 
 const toggle_follows = (state, action) => {
   const index = state.indexOf(action.id);
@@ -37,49 +36,80 @@ const toggle_friends = (state, action) => {
 
 const toggle = (state, action) => {
   const index = state.follows.indexOf(action.id);
-  console.log('toggle');
-  console.log(index);
   if (index === -1) {
     return {
       ...state,
       friends: toggle_friends(state.friends, action),
-      follows: [...state.follows, action.id.toString()],
+      follows: [
+        ...state.follows,
+        action.id.toString()
+      ],
     }
   } else {
     return {
       ...state,
       friends: toggle_friends(state.friends, action),
-      follows: state.follows.slice(0, index).concat(state.follows.slice(index+1)),
+      follows: [
+        ...state.follows.slice(0, index),
+        ...state.follows.slice(index+1),
+      ],
     }
   }
 }
 
+const updateFollows = (friends, follows) => {
+  return friends.map(friend => ({
+    ...friend,
+    add: follows.indexOf(friend.id) !== -1,
+  }))
+}
+
+
 export const facebook = (state = {}, action) => {
   switch(action.type) {
 
-    case 'INIT_FACEBOOK':
-      console.log('INIT_FACEBOOK');
-      console.log(state);
+    case 'FACEBOOK_USER':
       return {
         ...state,
-        follows: action.list
+        view: 'logged',
+        user: action.data,
       }
 
-    case 'FB_FETCH':
-      var nextState = {
-        friends: state.friends.concat(action.list),
-        follows: state.follows,
+    case 'FACEBOOK_FRIENDS':
+      return {
+        ...state,
+        friends: [
+          ...state.friends,
+          ...updateFollows(action.list, state.follows),
+        ],
         next: action.next,
       }
-      console.log('FB_FETCH');
-      console.log(nextState);
+
+    case 'FACEBOOK_FOLLOWS':
+      return {
+        ...state,
+        friends: updateFollows(state.friends, action.list),
+        follows: action.list,
+      }
+
+    case 'FACEBOOK_TOGGLE_FRIEND':
+      var nextState = toggle(state, action);
       return nextState
 
-    case 'FB_TOGGLE':
-      var nextState = toggle(state, action);
-      console.log('FB_TOGGLE');
-      console.log(nextState);
-      return nextState;
+    case 'FACEBOOK_LOGOUT':
+      return {
+        friends: [],
+        follows: [],
+        next: null,
+        user: null,
+        view: 'login',
+      }
+
+    case 'FACEBOOK_WAITING':
+      return {
+        ...state,
+        view: 'empty',
+      }
 
     default:
       return state;
@@ -89,30 +119,120 @@ export const facebook = (state = {}, action) => {
 export const instagram = (state = {}, action) => {
   switch(action.type) {
 
-    case 'INIT_INSTAGRAM':
+    case 'INSTAGRAM_USER':
       return {
         ...state,
-        follows: action.list
+        view: 'logged',
+        user: action.data,
       }
 
-    case 'IN_ADD':
-      return state.concat(action.list);
-
-    case 'IN_TOGGLE':
-      return toggle(state, action);
-
-    case 'IN_FETCH':
-      var nextState = {
-        friends: state.friends.concat(action.list),
-        follows: state.follows,
+    case 'INSTAGRAM_FRIENDS':
+      return {
+        ...state,
+        friends: [
+          ...state.friends,
+          ...updateFollows(action.list, state.follows),
+        ],
         next: action.next,
       }
-      console.log('IN_FETCH');
-      console.log(nextState);
+
+    case 'INSTAGRAM_FOLLOWS':
+      return {
+        ...state,
+        friends: updateFollows(state.friends, action.list),
+        follows: action.list,
+      }
+
+    case 'INSTAGRAM_TOGGLE_FRIEND':
+      var nextState = toggle(state, action);
       return nextState
-      
+
+    case 'INSTAGRAM_LOGOUT':
+      return {
+        friends: [],
+        follows: [],
+        next: null,
+        user: null,
+        view: 'login',
+      }
+
+    case 'INSTAGRAM_WAITING':
+      return {
+        ...state,
+        view: 'empty',
+      }
+
     default:
       return state;
+  }
+}
+
+export const gmail = (state = {}, action) => {
+  switch(action.type) {
+
+    case 'GMAIL_USER':
+      return {
+        ...state,
+        view: 'logged',
+        user: action.data,
+      }
+
+    case 'GMAIL_FRIENDS':
+      return {
+        ...state,
+        friends: [
+          ...state.friends,
+          ...updateFollows(action.list, state.follows),
+        ],
+        next: action.next,
+      }
+
+    case 'GMAIL_FOLLOWS':
+      return {
+        ...state,
+        friends: updateFollows(state.friends, action.list),
+        follows: action.list,
+      }
+
+    case 'GMAIL_TOGGLE_FRIEND':
+      var nextState = toggle(state, action);
+      return nextState
+
+    case 'GMAIL_LOGOUT':
+      return {
+        friends: [],
+        follows: [],
+        next: null,
+        user: null,
+        view: 'login',
+      }
+
+    case 'GMAIL_WAITING':
+      return {
+        ...state,
+        view: 'empty',
+      }
+
+    default:
+      return state;
+  }
+}
+
+export const settings = (state = {}, action) => {
+  switch(action.type) {
+    case 'www':
+      return state
+    default:
+      return state
+  }
+}
+
+export const network = (state = false, action) => {
+  switch(action.type) {
+    case 'NETWORK':
+      return action.data
+    default:
+      return state
   }
 }
 

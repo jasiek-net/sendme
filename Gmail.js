@@ -14,7 +14,7 @@ import {
 
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-import {API, COL, GM_CLIENT_ID} from './Global';
+import { API, COL, GM_CLIENT_ID } from './Global';
 
 import {encode} from 'base-64'
 import Keychain from 'react-native-keychain';
@@ -22,11 +22,9 @@ import RNFetchBlob from 'react-native-fetch-blob';
 
 import { GoogleSignin } from 'react-native-google-signin';
 
+import Message from './Message'
 import Empty from './Empty'
-import Login from './Login'
 import Menu from './Menu'
-
-import gg from './android/app/google-services.json';
 
 export default class Gmail extends Component {
 
@@ -109,10 +107,10 @@ export default class Gmail extends Component {
         return (<Empty />)
       case 'login':
         return (
-          <Login
+          <Message
             icon="google-plus-square"
-            type="Gmail"
-            login={this.login} />)
+            text="Login with Gmail!"
+            press={this.login} />)
       case 'logged':
         return (
           <Menu

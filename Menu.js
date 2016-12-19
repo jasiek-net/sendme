@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 
 import {
+  Image,
   StyleSheet,
   ScrollView,
   Text,
@@ -22,19 +23,28 @@ const s = StyleSheet.create({
   user: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
     height: 70,
     padding: 10,
     borderBottomWidth: 1,
     borderBottomColor: COL.brd_sml,
   },
-  userImg: {
+  info: {
+    flexDirection: 'column',
+    paddingLeft: 10,
+    paddingRight: 10,
+  },
+  img: {
     height: 50,
     width: 50,
     borderRadius: 25,
-    marginRight: 10,
   },
-  userName: {
+  head: {
     fontSize: 20,
+    color: COL.btn_head,
+    // color: COL.btn_foot,
+  },
+  foot: {
     color: COL.btn_foot,
   },
   button: {
@@ -65,25 +75,29 @@ const s = StyleSheet.create({
   },
 });
 
-    // const user = (<View style={s.user}>
-    //           <Image
-    //             source={{uri: this.img}}
-    //             resizeMode='contain'
-    //             style={s.userImg} />
-    //           <Text style={s.userName}>{this.username}</Text>
-    //         </View>)
-
 const Menu = ({
 	user,
+  logout,
 	friends,
-	logout
+  profile,
 }) => (
 	<ScrollView style={s.cont}>
-    <TouchableHighlight onPress={user} style={s.button}>
+    <View style={s.user}>
+      <Image style={s.img} source={{uri: user.img}} />
+      <View style={s.info}>
+        <Text style={s.head} numberOfLines={1}>
+          { user.name === '' ? 'No Name' : user.name }
+        </Text>
+        <Text style={s.foot}>
+          { user.foot }
+        </Text>
+      </View>
+    </View>
+    <TouchableHighlight onPress={profile} style={s.button}>
       <View style={s.buttonView}>
         <Icon style={s.buttonIcon} name="user"/>
         <Text style={s.buttonText}>
-          Your profile
+          Profile
         </Text>
         <Icon style={s.buttonArrow} name="angle-right"/>
       </View>
@@ -110,9 +124,10 @@ const Menu = ({
 );
 
 Menu.propTypes = {
-	user: PropTypes.func.isRequired,
-	logout: PropTypes.func.isRequired,
-	friends: PropTypes.func.isRequired,
+	// user: PropTypes.object.isRequired,
+	// logout: PropTypes.func.isRequired,
+	// friends: PropTypes.func.isRequired,
+ //  profile: PropTypes.func.isRequired,
 }
 
 export default Menu

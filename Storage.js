@@ -1,84 +1,162 @@
-import { AsyncStorage } from 'react-native'
+import {
+  AsyncStorage,
+  NetInfo,
+} from 'react-native'
 
 import {
+  applyMiddleware,
   combineReducers,
   createStore,
 } from 'redux'
 
+import thunk from 'redux-thunk'
+import promise from 'redux-promise'
+import createLogger from 'redux-logger'
+
 import throttle from 'lodash/throttle'
-import { facebook, instagram } from './Reducers'
-import { fetchData } from './Requests';
+import * as Reducers from './Reducers'
+
+import { fetchData } from './Requests'
 import { API } from './Global'
 
-export const loadState = () => {
+export const pureState = () => {
   const state = {
     facebook: {
       friends: [],
       follows: [],
-      next: API.FB_friends
+      next: null,
+      view: 'empty',
+      user: null,
     },
     instagram: {
       friends: [],
       follows: [],
-      next: API.IN_friends,
+      next: null,
+      view: 'empty',
+      user: null,
     },
+    gmail: {
+      friends: [],
+      follows: [],
+      next: null,
+      view: 'empty',
+      user: null,
+    },
+    settings: {
+      emails: [
+        {
+          email: 'jan.horubala@gmail.com',
+          id: 1,
+        },
+        {
+          email: 'ola.dolot@op.pl',
+          id: 2,
+        },
+        {
+          email: 'franciszek@mixbox.pl',
+          id: 3,
+        }
+      ],
+      hours: [
+        {
+          hour: '12:30',
+          id: 1,
+        },
+        {
+          hour: '13:45',
+          id: 2,
+        },
+        {
+          hour: '15:35',
+          id: 3,
+        }
+      ],
+      view: 'empty',
+    }
   }
   return state;
 }
 
-export const loadAsync = async (store) => {
-  console.log('loadAsync triggered');
-  var data = await AsyncStorage.getItem('store');
-  data = JSON.parse(data);
-  if (data && data.facebook) {
-    store.dispatch({
-      type: 'INIT_FACEBOOK',
-      list: data.facebook,
-    });
-  }
-  if (data && data.instagram) {  
-    store.dispatch({
-      type: 'INIT_INSTAGRAM',
-      list: data.instagram,
-    });
-  }
-  console.log('load AsyncStorage');
-  await fetchData(store);
-  return 'HURRA!'
+const loadState = (store) => {
+  AsyncStorage.getItem('store')
+  .then(res => JSON.parse(res))
+  .then(res => {
+    if (res && res.facebook) {
+      store.dispatch({
+        type: 'FACEBOOK_FOLLOWS',
+        list: res.facebook,
+      });
+    }
+    if (res && res.instagram) {  
+      store.dispatch({
+        type: 'INSTAGRAM_FOLLOWS',
+        list: res.instagram,
+      });
+    }
+  })
+  .catch(err => console.log('AsyncStorage.getItem ', err))
 }
 
-export const saveState = async (data) => {
-  try {
-    const store = JSON.stringify(data)
-    await AsyncStorage.setItem('store', store);
-    console.log('saveState success ', store);
-  } catch (err) {
-    console.log('saveState error ', err);
-  }
-}
+const saveState = (store) => 
+  throttle(() => {
+    const state = store.getState();
+    const data = {
+      facebook: state.facebook.follows,
+      instagram: state.instagram.follows,
+    }
+    AsyncStorage.setItem('store', JSON.stringify(data))
+    .catch(err => console.log('AsyncStorage.setItem ', err))
+  }, 1000)
 
 export const configureStore = () => {
 
-  const reducers = combineReducers({
-    facebook,
-    instagram
-  })
+  // NetInfo.fetch().then(is => {
+  //   console.log('NetInfo ', typeof is);
+  // });
+
+  const reducers = combineReducers(Reducers)
+
+  const middlewares = [thunk, promise, createLogger()]
   
-  const store = createStore(reducers, loadState());
+  const store = createStore(
+    reducers,
+    pureState(),
+    applyMiddleware(...middlewares)
+  );
 
-  store.subscribe(throttle(() => {
-    const state = store.getState();
-    saveState({
-      facebook: state.facebook.follows,
-      instagram: state.instagram.follows,
-    });
-  }, 1000));
+  // loadState(store);
 
-  loadAsync(store).then(res => console.log('End of fetching data!!!', res));
+  store.subscribe(saveState);
 
   return store
 }
 
+// const delay = ms =>
+//   new Promise(resolve => setTimeout(resolve, ms))
 
+// const addLogginToDispatch = (store) => {
+//   const rawDispatch = store.dispatch;
+//   if (!console.group) {
+//     return rawDispatch
+//   }
 
+//   return (action) => {
+//     console.group(action.type);
+//     console.log('%c prev state', 'color: grey', store.getState());
+//     console.log('%c action', 'color: blue', action);
+//     const returnValue = rawDispatch(action);
+//     console.log('%c next state', 'color: green', store.getState());
+//     console.groupEnd(action.type);
+//     return returnValue;
+//   }
+// }
 
+// const addProimiseSupportToDispatch = (store) => {
+//   const rawDispatch = store.dispatch;
+//   return (action) => {
+//     if (typeof action.then === 'function') {
+//       return action.then(rawDispatch);
+//     }
+//     return rawDispatch(action)
+//   }
+// }

@@ -28,6 +28,44 @@ Another tutorial I found on youtube, and it only about react native with redux. 
 
 
 
+ES6 syntaxt to decombine object
+const { store } = this.context;
+
+https://egghead.io/lessons/javascript-redux-dispatching-actions-with-the-fetched-data
+
+
+render() {
+	const { toggleTodo, ...rest } = this.props
+	return (
+		<ToDoList
+			{...rest}
+			onTodoClick={toggleTodo}
+	)
+}
+
+import * as actuibs from './actions'
+
+VisibleTodoList = withRouter(connect(
+	mapStateToProps,
+	actions
+)(VisibleTodoList));
+
+
+// in file actions.js
+
+export const receiveTodos = (filer, response) => ({
+	type: 'RECEIVE_TODOS',
+	filter,
+	response
+})
+
+export const addTodo = (text) => ({
+	type: 'ADD_TODO',
+	id: v4(),
+	text,
+})
+
+
 
 
 

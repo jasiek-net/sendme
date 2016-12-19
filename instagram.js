@@ -1,37 +1,20 @@
+'use strict';
+
 import React, {Component} from 'react';
-import {GoogleSignin, GoogleSigninButton} from 'react-native-google-signin';
 
 import {
-  AccessToken,
-  LoginManager,
-  GraphRequest,
-  GraphRequestManager
-} from 'react-native-fbsdk';
-
-import {
-  AppRegistry,
   Alert,
-  StyleSheet,
-  Text,
-  IntentAndroid,
-  TouchableHighlight,
-  Linking,
-  View,
-  Navigator,
-  Image,
   WebView,
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-import {encode} from 'base-64'
 import Keychain from 'react-native-keychain';
-import RNFetchBlob from 'react-native-fetch-blob';
 
 import { API, SIZ } from './Global'
 
+import Message from './Message'
 import Empty from './Empty'
-import Login from './Login'
 import Menu from './Menu'
 
 import { fetchInstagram } from './Requests'
@@ -122,12 +105,18 @@ export default class Instagram extends Component {
     switch(this.state.state) {
       case 'empty':
         return (<Empty />)
+      case 'network':
+        return (
+          <Message 
+            icon="wifi"
+            text="No Internet, Refresh!"
+            press={this.refresh} />)
       case 'login':
         return (
-          <Login
+          <Message
             icon='instagram'
-            type='Instagram'
-            login={this.login} />)
+            text='Login with Instagram!'
+            press={this.login} />)
       case 'logged':
         return (
           <Menu

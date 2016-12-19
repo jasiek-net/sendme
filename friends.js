@@ -1,22 +1,17 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 
 import {
+  ActivityIndicator,
   StyleSheet,
   Text,
   TouchableHighlight,
   View,
   ListView,
-  AsyncStorage,
   Image
 } from 'react-native';
 
-import {encode} from 'base-64'
-import Keychain from 'react-native-keychain';
-import RNFetchBlob from 'react-native-fetch-blob';
-
-import { API, COL, SIZ } from './Global';
-
-import { fetchFacebook } from './Requests';
+import { connect } from 'react-redux'
+import { COL, SIZ } from './Global';
 
 const Row = ({ toggle, row }) => (
   <View style={styles.row}>
@@ -53,9 +48,10 @@ class FriendsPresentational extends Component {
     super(props);
     this.ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2})
     this.state = {
-      dataSource: this.ds.cloneWithRows(props.friends)
+      dataSource: this.ds.cloneWithRows(props.friends),
+      load: false,
     }
-    // bind methods
+    this.onPress = this.onPress.bind(this);
     this.renderRow = this.renderRow.bind(this);
     this.renderFooter = this.renderFooter.bind(this);
   }
@@ -64,14 +60,19 @@ class FriendsPresentational extends Component {
     if (nextProps.friends !== this.props.friends) {
       console.log(nextProps)
       this.setState({
-        dataSource: this.ds.cloneWithRows(nextProps.friends)
+        dataSource: this.ds.cloneWithRows(nextProps.friends),
+        load: false,
       })
     }
   }
 
   renderRow(row) {
-    console.log('Render row ', row);
     return Row({toggle: this.props.toggle, row})
+  }
+
+  onPress() {
+    this.props.fetch(this.props.next);
+    this.setState({ load: true });
   }
 
   renderFooter() {
@@ -80,13 +81,17 @@ class FriendsPresentational extends Component {
     }
     return (
       <View style={[styles.row, {justifyContent: 'center', borderBottomWidth: 0}]}>
-        <TouchableHighlight
-          style={[styles.btn, {borderColor: COL.green}]}
-          onPress={this.props.fetch.bind(null, this.props.store)}>
-          <Text style={{color: COL.green}}>
-            LOAD MORE
-          </Text>
-        </TouchableHighlight>
+        {this.state.load ? 
+          (<ActivityIndicator color={COL.green} />)
+        :
+          (<TouchableHighlight
+            style={[styles.btn, {borderColor: COL.green}]}
+            onPress={this.onPress}>
+            <Text style={{color: COL.green}}>
+              LOAD MORE
+            </Text>
+          </TouchableHighlight>)
+        }
       </View>
     )
   }
@@ -104,36 +109,29 @@ class FriendsPresentational extends Component {
   }
 }
 
-import { connect } from 'react-redux'
-
 const mapStateToProps = (state, props) => {
-  console.log('mapStateToProps');
-  console.log(props)
   return {
     friends: state[props.type].friends,
     next: state[props.type].next,
-    store: state[props.type],
   }
 }
 
 // ACTION?
 const toggle = (type, id) => ({ type, id })
 
-
 const mapDispatchToProps = (dispatch, props) => {
   return {
-    toggle: id => {
-      dispatch(toggle(props.toggle, id))
-    },
-    fetch: state => {
-      props.fetch(state, dispatch)
-    }
+    // toggle: id => {
+    //   dispatch(toggle(props.toggle, id))
+    // },
+    // fetch: state => {
+    //   props.fetch(state, dispatch)
+    // }
   }
 }
 
 const Friends = connect(
   mapStateToProps,
-  mapDispatchToProps
 )(FriendsPresentational);
 
 export default Friends;
@@ -142,9 +140,6 @@ const styles = StyleSheet.create({
   list: {
     backgroundColor: COL.bg,
     paddingTop: SIZ.navall,
-  },
-  load: {
-    backgroundColor: 'red',
   },
   row: {
     flexDirection: 'row',

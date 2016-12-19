@@ -26,12 +26,14 @@ alias and_log="react-native log-android"
 - [ ] both: check why gmail is losing sended emails
 - [ ] Android: find framework for background tasks/background fetch (workers, alarmmanager, timer, etc.)
 - [ ] Android: test background fetch
-
+- [ ] both: check if instagram pagination works (need more friends)
 - [ ] both: [rethink react](https://facebook.github.io/react/docs/thinking-in-react.html) one more time 
-- [ ] iOS: 
-- [ ] iOS: styling fb/insta/gmail view
-- [ ] both: add profile info (fetch from network)
-- [ ] both: Instagram friends with pagination
+- [ ] both: implement photo module
+- [ ] both: implement settings module
+- [x] both: code recomposition: move Reducers (in some abstraction) to subfolders facebook/, instagram/
+- [x] iOS: styling fb/insta/gmail view
+- [x] both: add profile info (fetch from network)
+- [x] both: Instagram friends with pagination
 - [x] iOS: Gmail SDK
 - [x] both: one component for FriendsFacebook/FriendsInstagram
 - [x] both: Add redux to project
@@ -44,6 +46,18 @@ alias and_log="react-native log-android"
 - Instagram Auth:
 	- https://github.com/OAuthSwift/OAuthSwift/wiki/Instagram
 	- https://github.com/OAuthSwift/OAuthSwift/wiki/API-with-only-HTTP-scheme-into-callback-URL
+- what's the different between this two approaches:
+	(state) => {
+		return first: () => {
+			console.log(state)
+		}
+	}
+
+	(state) => {
+		return (state) => {
+			console.log(state)
+		}
+	}
 
 
 #### TO LEARN
@@ -54,7 +68,7 @@ alias and_log="react-native log-android"
 
 1. REDUX
 - https://egghead.io/courses/getting-started-with-redux
-- https://egghead.io/courses/building-react-applications-with-idiomatic-redux
+- https://egghead.io/courses/getting-started-with-redux
 - https://github.com/tayiorbeii/egghead.io_redux_course_notes
 
 - http://redux.js.org/docs/basics/UsageWithReact.html

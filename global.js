@@ -1,7 +1,11 @@
 
-String.prototype.capitalize = function() {
+String.prototype.cap = function() {
     return this.charAt(0).toUpperCase() + this.slice(1);
 }
+
+String.prototype.tup = function() {
+  return this.toUpperCase();
+} 
 
 const FB_URL = 'https://graph.facebook.com/';
 const IN_URL = 'https://api.instagram.com/v1/';
@@ -18,14 +22,20 @@ export const API = {
 	IN: IN_URL,
 	GM: GM_URL,
 
-	FB_friends: FB_URL + 'me/friends?fields=name,id,picture&limit=1&access_token=nometterwhat',
-	IN_friends: IN_URL + 'users/self/follows?',
+	FB_friends: FB_URL + 'me/friends?fields=name,id,picture,email&limit=1&access_token=nometterwhat', // limit=1
+	IN_friends: IN_URL + 'users/self/follows?access_token=', // count=2
+
+  FB_user: FB_URL + 'me?fields=name,email,picture.type(large)&access_token=',
+  IN_user: IN_URL + 'users/self?access_token=',
 
   IN_LOGIN: `https://api.instagram.com/oauth/authorize/` + 
             `?client_id=${ IN_CLIENT_ID }&redirect_uri=${ IN_REDIRECT_URI }` +
             `&response_type=token&scope=${ IN_SCOPE }`,
 
   IN_LOGOUT: 'https://instagram.com/accounts/logout',
+  IN_FIRST: 'first',
+
+  GM_CLIENT: '725209563882-v025p7u4cl84iplutoo4n0q51nnsbkoi.apps.googleusercontent.com',
 }
 
 export const COL = {
@@ -116,6 +126,7 @@ let { height, width } = Dimensions.get('window');
 export const SIZ = {
 // size of photos sending to backend
   login: width*2/3,
+  avatar: width*2/3,
 
   newWidth: 306,
   newHeight: 408,
