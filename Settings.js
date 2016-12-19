@@ -5,28 +5,56 @@ import {
   Alert,
   Image,
   StyleSheet,
-  TouchableHighlight,
   ListView,
   Text,
   View
 } from 'react-native';
+
+import { Button } from 'react-native-vector-icons/FontAwesome';
 
 import { COL, SIZ } from './Global'
 import { connect } from 'react-redux'
 
 import Empty from './Empty'
 
+const setting = {
+  emails: 'emails recipients',
+  hours: 'hours of sending',
+  sync: 'send photos now!',
+}
+
+const RenderSetting = (name, callback, icon, color) => (
+  <View style={styles.header}>
+    <Text style={styles.headTxt}>{ setting[name].tup() }</Text>
+    <Button
+      style={styles.icon}
+      iconStyle={{
+        color: color,
+        marginRight: 0,
+      }}
+      size={name === 'sync' ? 25 : 30}
+      backgroundColor='transparent'
+      name={icon}
+      onPress={callback}
+    />
+  </View>
+)
+
 class SettingsComp extends Component {
   constructor(props) {
     super(props);
     console.log(props);
     
-    const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2})
+    const ds = new ListView.DataSource({
+      rowHasChanged: (a, b) => a !== b,
+      sectionHeaderHasChanged: (a, b) => a !== b,
+    })
+
     this.state = {
-      list: ds.cloneWithRows([
-        ...props.emails,
-        ...props.hours,
-      ])
+      list: ds.cloneWithRowsAndSections({
+        emails: [...props.emails],
+        hours: [...props.hours],
+      })
     }
     this.renderRow = this.renderRow.bind(this);
   }
@@ -35,24 +63,44 @@ class SettingsComp extends Component {
 
   }
 
-  clickRemove() {}
+  removeItem() {}
+
+  addItem() {}
 
   renderRow(row, secId, rowId, highlightRow) {
-    console.log('Render row: ' + row);
     return (
       <View style={styles.row}>
-        <Text style={styles.email}>
-          {row.email}
+        <Text style={styles.data}>
+          {row.data}
         </Text>
-        <TouchableHighlight
-          onPress={this.clickRemove.bind(this, rowId, row.id)}
-          style={styles.removeButton}>
-          <Text style={styles.removeText}>
-            REMOVE
-          </Text>
-        </TouchableHighlight>
+        <Button
+          style={styles.icon}
+          size={25}
+          backgroundColor='transparent'
+          name='trash-o'
+          iconStyle={{ color: COL.red, marginRight: 0 }}
+          onPress={this.removeItem.bind(this, rowId, row.id)}
+        />
       </View>
+    )
+  }
+
+  renderSectionHeader(sectionData, sectionID) {
+    return RenderSetting(
+      sectionID,
+      () => this.addItem(),
+      'plus-circle',
+      COL.green
     );
+  }
+
+  renderSynchronization() {
+    return RenderSetting(
+      'sync',
+      () => this.synchronize(),
+      'paper-plane',
+      COL.green,
+    )
   }
 
   render() {
@@ -61,10 +109,15 @@ class SettingsComp extends Component {
       //   return <Empty />
       // case 'data':
         return (
-          <ListView
-            dataSource={this.state.list}
-            renderRow={this.renderRow}
-          />);
+          <View style={styles.cont}>
+            { this.renderSynchronization() }
+            <ListView
+              style={styles.list}
+              dataSource={this.state.list}
+              renderRow={this.renderRow}
+              renderSectionHeader={this.renderSectionHeader}
+            />
+          </View>);
     // }
   }
 }
@@ -80,25 +133,27 @@ const Settings = connect( states )( SettingsComp )
 export default Settings
 
 const styles = StyleSheet.create({
-  container: {
+  cont: {
     flex: 1,
+    paddingTop: SIZ.navall,
     backgroundColor: COL.bg,
   },
-  addButton: {
+  list: {
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    height: 50,
     padding: 10,
-    backgroundColor: COL.btn_bg,
-    borderTopColor: COL.brd_big,
-    borderTopWidth: 5,
+    backgroundColor: COL.bg,
+    borderBottomColor: COL.brd_sml,
+    borderBottomWidth: 1,
   },
-  addText: {
+  headTxt: {
+    fontSize: 20,
     color: COL.btn_head,
-    fontSize: 20,
-    textAlign: 'center'
-  },
-  input: {
-    fontSize: 20,
-    color: COL.btn_foot,
-    textAlign: 'center',
+    alignItems: 'center',
   },
   row: {
     flexDirection: 'row',
@@ -110,11 +165,16 @@ const styles = StyleSheet.create({
     borderBottomColor: COL.brd_sml,
     borderBottomWidth: 1,
   },
-  email: {
+  icon: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    width: 40,
+    margin: 0,
+    padding: 0,
+  },
+  data: {
     color: COL.btn_head,
     fontSize: 20,
-  },
-  removeText: {
-    color: COL.red,
   },
 });

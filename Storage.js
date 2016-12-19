@@ -45,29 +45,29 @@ export const pureState = () => {
     settings: {
       emails: [
         {
-          email: 'jan.horubala@gmail.com',
+          data: 'jan.horubala@gmail.com',
           id: 1,
         },
         {
-          email: 'ola.dolot@op.pl',
+          data: 'ola.dolot@op.pl',
           id: 2,
         },
         {
-          email: 'franciszek@mixbox.pl',
+          data: 'franciszek@mixbox.pl',
           id: 3,
         }
       ],
       hours: [
         {
-          hour: '12:30',
+          data: '12:30',
           id: 1,
         },
         {
-          hour: '13:45',
+          data: '13:45',
           id: 2,
         },
         {
-          hour: '15:35',
+          data: '15:35',
           id: 3,
         }
       ],
