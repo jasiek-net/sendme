@@ -6,29 +6,30 @@ import * as inActions from './instagram/Actions'
 import * as gmActions from './gmail/Actions'
 import Social from './Social'
 
-const states = (state, props) => ({
-    view: state[props.type].view,
-    user: state[props.type].user,
+const states = (type, icon) => (state, props) => ({
+    icon,
+    type,
+
+    view: state[type].view,
+    user: state[type].user,
     
-    friends: state[props.type].friends,
-    next: state[props.type].next,
+    friends: state[type].friends,
+    next: state[type].next,
     
-    icon: props.icon,
-    type: props.type,
     nav: props.nav,
   })
 
 export const Facebook = connect(
-	states,
+	states("facebook", "facebook-square"),
 	fbActions
 )(Social)
 
 export const Instagram = connect(
-	states,
+	states("instagram", "instagram"),
 	inActions
 )(Social)
 
 export const Gmail = connect(
-	states,
+	states("gmail", "google-plus-square"),
 	gmActions
 )(Social)

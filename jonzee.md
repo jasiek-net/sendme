@@ -27,6 +27,23 @@ Another tutorial I found on youtube, and it only about react native with redux. 
 
 
 
+3 way of using redux in react native (which one is correct?)
+- keep store as a global variable (strange)
+	- subscribe on store (and check if re-render in componentwillreceiveprops)
+	- store.subscribe(() => rerender())
+	- store.dispatch({ trigger action })
+	- get props and pass with store.getState()
+- get store from context with Provider (https://egghead.io/lessons/javascript-redux-passing-the-store-down-explicitly-via-props)
+	- cont
+		- hard to test
+		- hard to make universal
+		- 
+	- in components you want to use store you have to add infor about context
+		- Comp.contextTypes = { store: React.propTypes.object }
+		- you have to subscribe to store.subscribe to rerender your view and manually check if you data changes (and trigger forceUpdate()) or something
+- with connect (connect props to store and action to dispatch)
+
+
 
 ES6 syntaxt to decombine object
 const { store } = this.context;

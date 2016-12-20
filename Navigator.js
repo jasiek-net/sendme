@@ -40,22 +40,13 @@ export default class Nav extends Component {
   renderScene(route, nav) {
     switch (route.name) {
       case 'Facebook':
-        return (<Facebook
-          nav={nav}
-          type="facebook"
-          icon="facebook-square" />)
+        return <Facebook nav={nav} />
 
       case 'Instagram':
-        return (<Instagram
-          nav={nav}
-          type="instagram"
-          icon="instagram" />);
+        return <Instagram nav={nav} />
 
       case 'Gmail':
-        return (<Gmail
-          nav={nav}
-          type="gmail"
-          icon="google-plus-square" />)
+        return <Gmail nav={nav} />
 
       case 'Photo':
         return (<Photo nav={nav} {...route.props} change={this.props.change} />)

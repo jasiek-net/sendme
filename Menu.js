@@ -75,13 +75,25 @@ const s = StyleSheet.create({
   },
 });
 
+const RenderButton = (text, icon, call) => (
+  <TouchableHighlight onPress={call} style={s.button}>
+    <View style={s.buttonView}>
+      <Icon style={s.buttonIcon} name={icon}/>
+      <Text style={s.buttonText}>
+        { text }
+      </Text>
+      <Icon style={s.buttonArrow} name="angle-right"/>
+    </View>
+  </TouchableHighlight>
+);
+
 const Menu = ({
 	user,
   logout,
 	friends,
   profile,
 }) => (
-	<ScrollView style={s.cont}>
+  <ScrollView style={s.cont}>
     <View style={s.user}>
       <Image style={s.img} source={{uri: user.img}} />
       <View style={s.info}>
@@ -93,33 +105,9 @@ const Menu = ({
         </Text>
       </View>
     </View>
-    <TouchableHighlight onPress={profile} style={s.button}>
-      <View style={s.buttonView}>
-        <Icon style={s.buttonIcon} name="user"/>
-        <Text style={s.buttonText}>
-          Profile
-        </Text>
-        <Icon style={s.buttonArrow} name="angle-right"/>
-      </View>
-    </TouchableHighlight>
-    <TouchableHighlight onPress={friends} style={s.button}>
-      <View style={s.buttonView}>
-        <Icon style={s.buttonIcon} name="users"/>
-        <Text style={s.buttonText}>
-          Friends
-        </Text>
-        <Icon style={s.buttonArrow} name="angle-right"/>
-      </View>
-    </TouchableHighlight>
-    <TouchableHighlight onPress={logout} style={s.button}>
-      <View style={s.buttonView}>
-        <Icon style={s.buttonIcon} name="sign-out"/>
-        <Text style={s.buttonText}>
-          Log out
-        </Text>
-        <Icon style={s.buttonArrow} name="angle-right"/>
-      </View>
-    </TouchableHighlight>
+    { RenderButton('Profile', 'user', profile) }
+    { RenderButton('Friends', 'users', friends) }
+    { RenderButton('Log out', 'sign-out', logout) }
   </ScrollView>
 );
 

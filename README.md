@@ -15,6 +15,9 @@ alias zoome="and_emu & cd ~/zoome && and_rea & npm start"
 alias and_log="react-native log-android"
 ```
 
+#### BUGS & FIXES
+- I changed in Collapsible.js overflow to 'scroll' in render() https://github.com/oblador/react-native-collapsible/issues/51 
+
 
 
 #### TODO
@@ -68,8 +71,7 @@ alias and_log="react-native log-android"
 
 1. REDUX
 - https://egghead.io/courses/getting-started-with-redux
-- https://egghead.io/courses/getting-started-with-redux
-- https://github.com/tayiorbeii/egghead.io_redux_course_notes
+- https://egghead.io/courses/building-react-applications-with-idiomatic-redux https://github.com/tayiorbeii/egghead.io_redux_course_notes
 
 - http://redux.js.org/docs/basics/UsageWithReact.html
 
