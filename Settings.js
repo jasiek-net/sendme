@@ -138,13 +138,6 @@ const state = (state) => ({
   emails: state.settings.emails,
 })
 
-
-// const state = (type, icon, text) => (state) => ({
-//   text,
-//   icon,
-//   list: state.settings[type],
-// })
-
 const dispatch = (type) => (dispatch) => ({
   addEmail: (email) => dispatch({
     type: 'ADD_EMAIL',

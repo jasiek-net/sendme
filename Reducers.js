@@ -254,6 +254,11 @@ export const settings = (state = {}, action) => {
         hours: state.hours.filter(e => e.id !== action.data)
       }  
 
+    case 'LOAD_SETTINGS':
+      return {
+        ...action.data,
+      }
+
     default:
       return state
   }

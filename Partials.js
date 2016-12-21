@@ -6,7 +6,7 @@ import {
   StyleSheet,
   ScrollView,
   Text,
-  TouchableHighlight,
+  TouchableOpacity,
   View,
 } from 'react-native'
 
@@ -51,7 +51,7 @@ const MenuButton = ({
   iconLeft,
   iconRight,
 }) => (
-  <TouchableHighlight onPress={call} style={s.button}>
+  <TouchableOpacity onPress={call} style={s.button}>
     <View style={s.buttonView}>
       <Icon style={s.iconLeft} name={iconLeft} />
       <Text style={s.text}>
@@ -59,7 +59,7 @@ const MenuButton = ({
       </Text>
       <Icon style={s.iconRight} name={iconRight}/>
     </View>
-  </TouchableHighlight>
+  </TouchableOpacity>
 );
 
 const FootButton = ({
@@ -78,7 +78,7 @@ const FootButton = ({
     {load ? 
       (<ActivityIndicator color={COL.green} />)
     :
-      (<TouchableHighlight
+      (<TouchableOpacity
         style={{
         	borderWidth: 1,
 			    padding: 3,
@@ -91,7 +91,7 @@ const FootButton = ({
         <Text style={{color: COL.green}}>
           { text }
         </Text>
-      </TouchableHighlight>)
+      </TouchableOpacity>)
     }
   </View>
 )
@@ -156,13 +156,13 @@ const RenderRow = ({
         { text }
       </Text>
     </View>
-    <TouchableHighlight onPress={call}>
+    <TouchableOpacity onPress={call}>
       <View style={[sRow.btn, sRow.followBtn]}>
         <Text style={sRow.followTxt}>
           { btn }
         </Text>
       </View>
-    </TouchableHighlight>
+    </TouchableOpacity>
   </View>
 )
 

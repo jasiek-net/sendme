@@ -15,13 +15,28 @@ alias zoome="and_emu & cd ~/zoome && and_rea & npm start"
 alias and_log="react-native log-android"
 ```
 
+store = {
+	
+
+	settings: {
+		emails: [
+			{
+				data: 'jan@horubala.pl',
+				id: 12234238239323
+			}
+		]
+	}
+}
+
+
+
 #### BUGS & FIXES
 - I changed in Collapsible.js overflow to 'scroll' in render() https://github.com/oblador/react-native-collapsible/issues/51 
 
 
 
 #### TODO
-
+- [ ] refactor: when to save data to async storage? to not o often??
 - [ ] refactor: move ModalHour and ModalEmail to one component, extract input and datepicker with one methods: onChange
 - [ ] iOS: try to set specific hours for background tasks, [tutorial](https://possiblemobile.com/2013/09/ios-7-background-fetch/)
 - [ ] iOS: trigger fetch every 15 minutes, check for hours in async storage

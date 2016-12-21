@@ -70,8 +70,7 @@ export const pureState = () => {
           data: '15:35',
           id: 3,
         }
-      ],
-      view: 'empty',
+      ]
     }
   }
   return state;
@@ -95,10 +94,27 @@ const loadState = (store) => {
     }
   })
   .catch(err => console.log('AsyncStorage.getItem ', err))
+  loadSettings(store)
 }
 
-const saveState = (store) => 
+const loadSettings = (store) => {
+  console.log('loadSettings');
+  AsyncStorage.getItem('settings')
+  .then(res => JSON.parse(res))
+  .then(res => {
+    console.log('loadSettings ', res);
+    if (res) {    
+      store.dispatch({
+        type: 'LOAD_SETTINGS',
+        data: res,
+      })
+    }
+  })
+}
+
+const saveState = (store) =>
   throttle(() => {
+    console.log('saveState throttle')
     const state = store.getState();
     const data = {
       facebook: state.facebook.follows,
@@ -106,7 +122,11 @@ const saveState = (store) =>
     }
     AsyncStorage.setItem('store', JSON.stringify(data))
     .catch(err => console.log('AsyncStorage.setItem ', err))
-  }, 1000)
+
+    AsyncStorage.setItem('settings', JSON.stringify(state.settings))
+    .catch(err => console.log('AsyncStorage.setItem ', err))
+
+  }, 3000)
 
 export const configureStore = () => {
 
@@ -124,10 +144,10 @@ export const configureStore = () => {
     applyMiddleware(...middlewares)
   );
 
-  // loadState(store);
+  loadState(store);
 
-  store.subscribe(saveState);
-
+  store.subscribe(saveState(store));
+  // store.subscribe((e) => console.log('subscribe triggereeed!', store))
   return store
 }
 
