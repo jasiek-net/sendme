@@ -220,8 +220,40 @@ export const gmail = (state = {}, action) => {
 
 export const settings = (state = {}, action) => {
   switch(action.type) {
-    case 'www':
-      return state
+    case 'ADD_EMAIL':
+      return {
+        ...state,
+        emails: [
+          ...state.emails,
+          {
+            id: Date.now(),
+            data: action.data,
+          }
+        ]
+      }
+    case 'REMOVE_EMAIL':
+      return {
+        ...state,
+        emails: state.emails.filter(e => e.id !== action.data)
+      }  
+
+    case 'ADD_HOUR':
+      return {
+        ...state,
+        hours: [
+          ...state.hours,
+          {
+            id: Date.now(),
+            data: action.data,
+          }
+        ]
+      }
+    case 'REMOVE_HOUR':
+      return {
+        ...state,
+        hours: state.hours.filter(e => e.id !== action.data)
+      }  
+
     default:
       return state
   }

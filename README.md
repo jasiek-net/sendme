@@ -22,24 +22,29 @@ alias and_log="react-native log-android"
 
 #### TODO
 
+- [ ] refactor: move ModalHour and ModalEmail to one component, extract input and datepicker with one methods: onChange
 - [ ] iOS: try to set specific hours for background tasks, [tutorial](https://possiblemobile.com/2013/09/ios-7-background-fetch/)
 - [ ] iOS: trigger fetch every 15 minutes, check for hours in async storage
-- [ ] both: implement new design for tabbar
-- [ ] both: module with camera and gallery
-- [ ] both: check why gmail is losing sended emails
+- [ ] implement new design for tabbar
+- [ ] module with camera and gallery
+- [ ] check why gmail is losing sended emails
 - [ ] Android: find framework for background tasks/background fetch (workers, alarmmanager, timer, etc.)
 - [ ] Android: test background fetch
-- [ ] both: check if instagram pagination works (need more friends)
-- [ ] both: [rethink react](https://facebook.github.io/react/docs/thinking-in-react.html) one more time 
-- [ ] both: implement photo module
-- [ ] both: implement settings module
-- [x] both: code recomposition: move Reducers (in some abstraction) to subfolders facebook/, instagram/
+- [ ] check if instagram pagination works (need more friends)
+- [ ] [rethink react](https://facebook.github.io/react/docs/thinking-in-react.html) one more time 
+- [ ] implement photo module
+- [ ] move elements to partials, make higher abstractions
+- [ ] implement settings logic (actions)
+- [ ] find some better abstractions for facebook & instagram reducers
+- [ ] split reducers to several files
+- [x] implement settings view
+- [x] code recomposition: move Reducers (in some abstraction) to subfolders facebook/, instagram/
 - [x] iOS: styling fb/insta/gmail view
-- [x] both: add profile info (fetch from network)
-- [x] both: Instagram friends with pagination
+- [x] add profile info (fetch from network)
+- [x] Instagram friends with pagination
 - [x] iOS: Gmail SDK
-- [x] both: one component for FriendsFacebook/FriendsInstagram
-- [x] both: Add redux to project
+- [x] one component for FriendsFacebook/FriendsInstagram
+- [x] Add redux to project
 - [x] iOS: test background fetch (protip: Xcode > Debug > Simulate Background Fetch)
 - [x] iOS: find framework for background tasks [react-native-background-fetch](https://github.com/transistorsoft/react-native-background-fetch)
 

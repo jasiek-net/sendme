@@ -97,10 +97,6 @@ const FootButton = ({
 )
 
 const sRow = StyleSheet.create({
-  list: {
-    backgroundColor: COL.bg,
-    paddingTop: SIZ.navall,
-  },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -109,9 +105,6 @@ const sRow = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: COL.brd_sml,
     backgroundColor: COL.bg,
-  },
-  cont: {
-    flexDirection: 'row',
   },
   img: {
     height: 50,
@@ -173,4 +166,8 @@ const RenderRow = ({
   </View>
 )
 
-export { MenuButton, FootButton, RenderRow }
+export {
+	MenuButton,
+	FootButton,
+	RenderRow
+}

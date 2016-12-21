@@ -7,16 +7,13 @@ import {
   ScrollView,
   Text,
   TouchableHighlight,
+  DatePickerIOS,
   View,
 } from 'react-native'
-
-import { connect } from 'react-redux'
 
 import Collapsible from 'react-native-collapsible';
 
 import Icon from 'react-native-vector-icons/FontAwesome'
-
-import { COL, SIZ } from '../Global'
 
 import {
   MenuButton,
@@ -24,10 +21,11 @@ import {
   RenderRow,
 } from '../Partials'
 
-class Visible extends Component {
+export default class CustomCollapsible extends Component {
+
   constructor(props) {
-    super(props)
-    this.state = { collapse: true }
+    super(props);
+    this.state = {collapse: true};
   }
 
   render() {
@@ -35,8 +33,8 @@ class Visible extends Component {
       <View>
         <MenuButton
           text={this.props.text}
-          call={() => this.setState({ collapse: !this.state.collapse })}
           iconLeft={this.props.icon}
+          call={() => this.setState({collapse: !this.state.collapse})}
           iconRight={this.state.collapse ? 'angle-down' : 'angle-up'}
         />
         <Collapsible collapsed={this.state.collapse} align="center">
@@ -45,7 +43,7 @@ class Visible extends Component {
               key={a.id}
               btn='REMOVE'
               text={a.data}
-              call={this.props.remove.bind(null, a.id)}
+              call={this.props.remove.bind(null, this.props.type, a)}
             />
           ))}
           <FootButton
@@ -57,26 +55,3 @@ class Visible extends Component {
     )
   }
 }
-
-const state = (type, icon, text) => (state) => ({
-  text,
-  icon,
-  list: state.settings[type],
-})
-
-const dispatch = (type) => (dispatch) => ({
-  add: () => undefined,
-  remove: () => undefined,
-})
-
-const Emails = connect(
-  state('emails', 'envelope-o', 'Emails of recipients'),
-  dispatch('emails'),
-)(Visible)
-
-const Hours = connect(
-  state('hours', 'clock-o', 'Time of sending'),
-  dispatch('hours')
-)(Visible)
-
-export { Emails, Hours }
