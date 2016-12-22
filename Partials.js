@@ -50,6 +50,7 @@ const MenuButton = ({
   call,
   iconLeft,
   iconRight,
+  itemRight,
 }) => (
   <TouchableOpacity onPress={call} style={s.button}>
     <View style={s.buttonView}>
@@ -57,7 +58,11 @@ const MenuButton = ({
       <Text style={s.text}>
         { text }
       </Text>
-      <Icon style={s.iconRight} name={iconRight}/>
+      {itemRight !== undefined ?
+        itemRight
+        :
+        <Icon style={s.iconRight} name={iconRight}/>
+      }
     </View>
   </TouchableOpacity>
 );

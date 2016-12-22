@@ -20,17 +20,22 @@ export default class Main extends Component {
 
   constructor(props) {
     super(props);
-    this.state = { tab: 'Settings' }
+    this.state = {tab: 'Facebook'}
     this.change = this.change.bind(this);
   }
 
   change(state) {
-    this.setState({tab: state})
+    if (state !== 'Photo') {
+      this.setState({tab: state})
+    } else {
+      this.props.nav.push({
+        name: 'Photo',
+      })
+    }
   }
 
   renderIcon(name, color) {
     return (<Icon name={name} size={30} color={color ? color : COL.txt} />);
-    return (<Image source={icons[i]} />);
   }
 
   render() {
@@ -58,11 +63,11 @@ export default class Main extends Component {
             </TabNavigator.Item>
             <TabNavigator.Item
               renderIcon={this.renderIcon.bind(null, 'camera')}
-              renderSelectedIcon={this.renderIcon.bind(null, 'camera')} 
-              selected={this.state.tab === 'photo' || this.state.tab === 'prime'}
+              renderSelectedIcon={this.renderIcon.bind(null, 'camera', COL.green)}
+              selected={this.state.tab === 'never gonna happend'}
               tabStyle={styles.tabMain}
-              onPress={() => (this.refs.nav && this.refs.nav.getRoutes().length > 1) ? this.change('prime') : this.change('photo')}>
-              <Navigator ref="nav" name="photo" change={this.change} search={this.search}/>
+              onPress={() => this.change('Photo')}>
+              <View></View>
             </TabNavigator.Item>
             <TabNavigator.Item
               renderIcon={this.renderIcon.bind(null, 'google-plus-square')}

@@ -2,11 +2,11 @@
 
 import React from 'react'
 import { Provider } from 'react-redux'
-import Main from './Main'
+import Navigator from './Navigator'
 
 const Root = ({ store }) => (
   <Provider store={store}>
-    <Main />
+    <Navigator name="Photo" hideNavBar={true} />
   </Provider>
 )
 

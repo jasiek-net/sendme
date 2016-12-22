@@ -4,6 +4,8 @@ import android.app.Application;
 import android.util.Log;
 
 import com.facebook.react.ReactApplication;
+import com.imagepicker.ImagePickerPackage;
+import com.lwansbrough.RCTCamera.RCTCameraPackage;
 import com.remobile.datetimepicker.RCTDateTimePickerPackage;
 import com.RNFetchBlob.RNFetchBlobPackage;
 import com.facebook.react.ReactInstanceManager;
@@ -50,6 +52,8 @@ public class MainApplication extends Application implements ReactApplication {
       return Arrays.<ReactPackage>asList(
         new RNFetchBlobPackage(),
         new MainReactPackage(),
+            new ImagePickerPackage(),
+            new RCTCameraPackage(),
             new RCTDateTimePickerPackage(),
         new FBSDKPackage(mCallbackManager),
         new RNGoogleSigninPackage(),

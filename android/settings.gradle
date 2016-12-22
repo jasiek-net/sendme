@@ -1,6 +1,10 @@
 rootProject.name = 'zoome'
 
 include ':app'
+include ':react-native-image-picker'
+project(':react-native-image-picker').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-image-picker/android')
+include ':react-native-camera'
+project(':react-native-camera').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-camera/android')
 include ':react-native-datetime-picker'
 project(':react-native-datetime-picker').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-datetime-picker/android')
 include ':react-native-vector-icons'

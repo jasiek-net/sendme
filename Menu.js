@@ -13,6 +13,10 @@ import Icon from 'react-native-vector-icons/FontAwesome'
 
 import { COL, SIZ } from './Global'
 
+import {
+  MenuButton,
+} from './Partials';
+
 const s = StyleSheet.create({
   cont: {
     flex: 1,
@@ -47,45 +51,7 @@ const s = StyleSheet.create({
   foot: {
     color: COL.btn_foot,
   },
-  button: {
-    padding: 14,
-    backgroundColor: COL.btn_bg,
-    borderBottomWidth: 1,
-    borderBottomColor: COL.brd_sml,
-  },
-  buttonView: {
-    flexDirection: 'row',
-    alignItems: 'center'
-  },
-  buttonText: {
-    color: COL.btn_head,
-    fontSize:20,
-    flex: 1,
-  },
-  buttonIcon: {
-    color: COL.btn_txt,
-    fontSize: 20,
-    textAlign: 'center',
-    width: 30,
-    marginRight: 10,
-  },
-  buttonArrow: {
-    color: COL.btn_txt,
-    fontSize: 20,
-  },
 });
-
-const RenderButton = (text, icon, call) => (
-  <TouchableHighlight onPress={call} style={s.button}>
-    <View style={s.buttonView}>
-      <Icon style={s.buttonIcon} name={icon}/>
-      <Text style={s.buttonText}>
-        { text }
-      </Text>
-      <Icon style={s.buttonArrow} name="angle-right"/>
-    </View>
-  </TouchableHighlight>
-);
 
 const Menu = ({
 	user,
@@ -105,9 +71,21 @@ const Menu = ({
         </Text>
       </View>
     </View>
-    { RenderButton('Profile', 'user', profile) }
-    { RenderButton('Friends', 'users', friends) }
-    { RenderButton('Log out', 'sign-out', logout) }
+    <MenuButton text='Profile'
+      call={profile}
+      iconLeft='user'
+      iconRight='angle-right'
+    />
+    <MenuButton text='Friends'
+      call={friends}
+      iconLeft='users'
+      iconRight='angle-right'
+    />
+    <MenuButton text='Log out'
+      call={logout}
+      iconLeft='sign-out'
+      iconRight='angle-right'
+    />
   </ScrollView>
 );
 

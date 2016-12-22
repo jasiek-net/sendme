@@ -7,7 +7,7 @@ import {
   StyleSheet,
   ScrollView,
   Text,
-  TouchableHighlight,
+  TouchableOpacity,
   View,
 } from 'react-native'
 
@@ -19,49 +19,24 @@ import { COL, SIZ } from './Global'
 
 import Collapsible from './settings/Collapsible';
 import { ModalEmail, ModalHour } from './settings/Modal';
-
-const s = StyleSheet.create({
-  cont: {
-    flex: 1,
-    flexDirection: 'column',
-    backgroundColor: COL.bg,
-    paddingTop: SIZ.navall,
-  },
-  button: {
-    padding: 14,
-    backgroundColor: COL.btn_bg,
-    borderBottomWidth: 1,
-    borderBottomColor: COL.brd_sml,
-  },
-  buttonView: {
-    flexDirection: 'row',
-    alignItems: 'center'
-  },
-  buttonText: {
-    color: COL.btn_head,
-    fontSize:20,
-    flex: 1,
-  },
-  buttonIcon: {
-    color: COL.btn_txt,
-    fontSize: 20,
-    textAlign: 'center',
-    width: 30,
-    marginRight: 10,
-  },
-});
+import { MenuButton } from './Partials';
 
 class Settings extends Component {
   
   constructor(props) {
     super(props)
+    this.state = {sync: false}
+    this.sync = this.sync.bind(this);
     this.remove = this.remove.bind(this);
-    this.openEmails = this.openEmails.bind(this);
-    this.openHours = this.openHours.bind(this);
   }
 
   componentDidMount() {
     // this.refs.emails.open()
+  }
+
+  sync() {
+    this.setState({sync: true})
+    setTimeout(() => this.setState({sync: false}), 2000);
   }
 
   remove(type, a) {
@@ -82,30 +57,29 @@ class Settings extends Component {
       ]
     )
   }
-  openEmails() { this.emails.open() }
-  openHours() {
-    console.log(this.hours);
-    this.hours.open()
-  }
 
   render() {
     return (
       <View style={{flex: 1}}>
-      <ScrollView style={s.cont}>
-      <TouchableHighlight onPress={() => undefined} style={s.button}>
-        <View style={s.buttonView}>
-          <Icon style={s.buttonIcon} name="paper-plane"/>
-          <Text style={s.buttonText}>
-            Send photos
-          </Text>
+      <ScrollView style={{
+        flex: 1,
+        flexDirection: 'column',
+        backgroundColor: COL.bg,
+        paddingTop: SIZ.navall,
+      }}>
+      <MenuButton
+        text='Send photos now'
+        iconLeft='paper-plane'
+        call={this.sync}
+        itemRight={
           <ActivityIndicator
-            color={COL.btn_txt}
+            color={this.state.sync ? COL.green : COL.btn_txt}
             size="small"
-            animating={false}
+            animating={this.state.sync}
             hidesWhenStopped={false}
-          />
-        </View>
-      </TouchableHighlight>
+          />          
+        }
+      />
       <Collapsible
         type='emails'
         text='Emails of recipients'

@@ -2,50 +2,40 @@
 
 import React, {Component} from 'react';
 import {
-  StyleSheet,
   Image,
+  TouchableOpacity,
+  Text,
+  StyleSheet,
   View,
 } from 'react-native';
 
 // import ImageResizer from 'react-native-image-resizer';
-// import TabNavigator from 'react-native-tab-navigator';
-// import ImagePicker from 'react-native-image-picker';
+import TabNavigator from 'react-native-tab-navigator';
+import ImagePicker from 'react-native-image-picker';
 // import Toast from '@remobile/react-native-toast';
-// import Camera from 'react-native-camera';
+import Camera from 'react-native-camera';
 
-// import {SIZ, COL, API, OUT} from './Global';
+import Icon from 'react-native-vector-icons/FontAwesome';
+
+import {SIZ, COL, API, OUT} from './Global';
 // import {STR} from './Strings';
 // import Blur from './Blur';
 
 export default class Photo extends Component {
-  render() {
-    return null
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      send: false,
+      img: null,
+    }
+    // this.navigate = this.navigate.bind(this);
+    // this.sendPhoto = this.sendPhoto.bind(this);
+    this.fromCamera = this.fromCamera.bind(this);
+    this.fromGallery = this.fromGallery.bind(this);
+    // this.cancelButton = this.cancelButton.bind(this);
+    // this.waitForResult = this.waitForResult.bind(this);
   }
-
-  // constructor(props) {
-  //   super(props);
-  //   this.state = {
-  //     waiting: false,
-  //     captured: false,
-  //   }
-  //   this.navigate = this.navigate.bind(this);
-  //   this.sendPhoto = this.sendPhoto.bind(this);
-  //   this.fromCamera = this.fromCamera.bind(this);
-  //   this.fromGallery = this.fromGallery.bind(this);
-  //   this.cancelButton = this.cancelButton.bind(this);
-  //   this.waitForResult = this.waitForResult.bind(this);
-  // }
-
-  // navigate(data) {
-  //   this.props.nav.push({
-  //     name: 'Prime',
-  //     passProps: {
-  //       data: data,
-  //       change: this.props.change,
-  //       userImage: this.userImage,
-  //     }
-  //   })
-  // }
 
   // waitForResult(jobId) {
   //   fetch(API.JOB + "?jobId=" + jobId, {headers: API.HEADER})
@@ -100,118 +90,214 @@ export default class Photo extends Component {
   //   this.props.change('home')
   // }
 
-  // fromGallery() {
-  //   if (this.state.waiting) return null;
-  //   let options = {mediaType: 'photo'}
-  //   ImagePicker.launchImageLibrary(options, (res)  => {
-  //     if (res.uri) {
-  //       this.userImage = res.uri
-  //       this.sendPhoto(res.uri);
-  //     }
-  //   });
-  // }
+  fromGallery() {
+    // if (this.state.waiting) return null;
+    let options = {mediaType: 'photo'}
+    ImagePicker.launchImageLibrary(options, (res)  => {
+      if (res.uri) {
+        this.userImage = res.uri
+        // this.sendPhoto(res.uri);
+        this.setState({img: this.userImage});
+      }
+    });
+  }
 
-  // fromCamera() {
-  //   if (this.state.waiting) return null;
-  //   this.refs.camera.capture()
-  //   .then((data) => {
-  //     this.userImage = data.path;
-  //     this.sendPhoto(data.path);
-  //   })
-  //   .catch(err => console.error("Error camer fromCamera() " + err));
-  // }
+  fromCamera() {
+    this.refs.camera.capture()
+    .then((data) => {
+      this.img = data.path;
+      // this.sendPhoto(data.path);
+      console.log('caputred photo')
+      console.log(this.img);
 
-  // render() {
-  //   return (
-  //     <View style={{flex: 1, position: 'relative'}}>
-  //       {this.state.image ? 
-  //       <Image style={{flex: 1}} source={{uri: this.state.image}} />
-  //       : null}
-  //       <Camera
-  //         caputreAudio={false}
-  //         aspect={Camera.constants.Aspect.fill}
-  //         captureTarget={Camera.constants.CaptureTarget.disk}
-  //         ref="camera"
-  //         style={{flex: 1}}>
-  //         <View style={s.opaque}></View>
-  //         <TabNavigator
-  //           tabBarShadowStyle={{height: 0}}
-  //           tabBarStyle={s.tabbar}>
-  //           <TabNavigator.Item
-  //             renderIcon={() => <Image source={require('./assets/circle_x_white.png')} />}
-  //             renderSelectedIcon={() => <Image source={require('./assets/circle_x_white.png')} />}
-  //             selected={false}
-  //             tabStyle={s.tabSide}
-  //             onPress={this.cancelButton}>
-  //           </TabNavigator.Item>
-  //           <TabNavigator.Item
-  //             renderIcon={() => <Image source={require('./assets/tabbar/bar_icon_foto.png')} />}
-  //             renderSelectedIcon={() => <Image source={require('./assets/tabbar/bar_icon_foto.png')} />}
-  //             selected={true}
-  //             tabStyle={s.tabMain}
-  //             onPress={this.fromCamera}>
-  //             <Blur show={this.state.waiting} type="dark" />
-  //           </TabNavigator.Item>
-  //           <TabNavigator.Item
-  //             renderIcon={() => <Image source={require('./assets/icon_scan_gallery.png')} />}
-  //             renderSelectedIcon={() => <Image source={require('./assets/icon_scan_gallery.png')} />}
-  //             selected={false}
-  //             tabStyle={s.tabSide}
-  //             onPress={this.fromGallery}>
-  //           </TabNavigator.Item>
-  //         </TabNavigator>
-  //         <View style={s.border}></View>
-  //       </Camera>
-  //     </View>
-  //   );
-  // }
+      this.setState({img: this.img});
+    })
+    .catch(err => console.error("Error camer fromCamera() " + err));
+  }
+
+  renderIcon(name, color) {
+    return (<Icon name={name} size={30} color={color ? color : COL.white} />);
+  }
+
+  render() {
+    // return <View style={{flex: 1, backgroundColor: 'black'}} />
+    return (
+      <Camera
+        caputreAudio={false}
+        aspect={Camera.constants.Aspect.fill}
+        captureTarget={Camera.constants.CaptureTarget.disk}
+        ref="camera"
+        style={{flex: 1, position: 'relative'}}>
+
+
+        <TabNavigator
+          tabBarStyle={s.tabbar}
+          tabBarShadowStyle={{height: 0}}>
+            <TabNavigator.Item
+              tabStyle={s.tabSide}
+              selected={false}
+              renderIcon={this.renderIcon.bind(null, 'times-circle')}
+              onPress={() => this.props.nav.pop()} />
+            <TabNavigator.Item
+              tabStyle={s.tabMain}
+              selected={this.state.img !== null}
+              renderIcon={this.renderIcon.bind(null, 'camera')}
+              renderSelectedIcon={this.renderIcon.bind(null, 'camera')}
+              onPress={this.fromCamera}>
+              <Image
+                style={s.img}
+                source={{uri: this.state.img}} />
+            </TabNavigator.Item>
+            <TabNavigator.Item
+              tabStyle={s.tabSide}
+              selected={false}
+              renderIcon={this.renderIcon.bind(null, 'folder-open')}
+              onPress={this.fromGallery} />
+          </TabNavigator>
+
+
+
+          <View style={{
+            height: 140,
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            // backgroundColor: 'green',
+            position: 'absolute',
+            left: 30,
+            right: 30,
+            bottom: 44,
+          }}>
+            <TouchableOpacity style={s.btn} onPress={this.props.nav.pop}>
+              <Icon
+                name='times-circle'
+                size={60}
+                color={COL.white}
+                backgroundColor='transparent' />
+              <Text style={{
+                borderWidth: 2,
+                borderColor: COL.white,
+                padding: 3,
+                fontSize: 10,
+                fontWeight: 'bold',
+                textAlign: 'center',
+                color: COL.white,
+                width: 60,
+                margin: 5,
+                borderRadius: 4,
+              }}>
+                CANCEL                
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={s.btn}>
+              <Icon
+                name='paper-plane'
+                size={60}
+                color={COL.white}
+                backgroundColor='transparent'/>
+              <Text style={{
+                borderWidth: 1,
+                borderColor: COL.white,
+                padding: 3,
+                fontSize: 10,
+                textAlign: 'center',
+                color: COL.white,
+                width: 60,
+                margin: 5,
+                borderRadius: 3,
+              }}>
+                SEND                
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+
+
+        </Camera>
+    );
+  }
 }
 
+const PhotoButton = ({
+  callLeft,
+  callRight,
+  iconLeft,
+  iconRight,
+}) => (
+  <View>
+    
+  </View>
+)
 
-// const s = StyleSheet.create({
-//   opaque: {
-//     opacity: 0.2,
-//     borderWidth: SIZ.width/2,
-//     // borderRadius: SIZ.width/1.5,
-//     borderRadius: SIZ.width,
-//     borderColor: '#AE9571',
 
-//     position: 'absolute',
-//     top: -SIZ.width/2 + SIZ.rating,
-//     left: -SIZ.width/2 + SIZ.l,
-//     right: -SIZ.width/2 + SIZ.l,
-//     bottom: -SIZ.width/2 + 100,
-//     backgroundColor: 'transparent',
-//   },
-//   border: {
-//     borderWidth: 3,
-//     // borderRadius: SIZ.width/6,
-//     borderRadius: SIZ.width/2,
-//     borderColor: COL.white,
+const s = StyleSheet.create({
+  btn: {
+    flexDirection: 'column',
+    // justifyContent: 'center',
+    alignItems: 'center',
+    width: 100,
+  },
 
-//     position: 'absolute',
-//     top: SIZ.rating,
-//     left: SIZ.l,
-//     right: SIZ.l,
-//     bottom: 100,
-//     backgroundColor: 'transparent',
-//   },
-//   tabbar: {
-//     height: SIZ.tabbar,
-//     backgroundColor: 'transparent',
-//   },
-//   tabMain: {
-//     backgroundColor: COL.tabmain,
-//     marginTop: -8,
-//     borderRadius: 5,
-//     borderBottomLeftRadius: 0,
-//     borderBottomRightRadius: 0,
-//   },
-//   tabSide: {
-//     flex: 2,
-//   },
-// });
+  img: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    resizeMode: 'cover',
+  },
+  tabbar: {
+    height: SIZ.tabbar,
+    backgroundColor: 'transparent',
+  },
+  tabMain: {
+    marginTop: -8,
+    borderRadius: 5,
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0,
+    borderColor: COL.green,
+    borderWidth: 1,
+    borderBottomWidth: 0,
+    // backgroundColor: COL.black,
+  },
+  tabSide: {
+    flex: 2,
+    borderColor: COL.green,
+    borderTopWidth: 1,
+  },
+});
 
+
+
+/*
+          <View style={s.opaque}></View>
+          <TabNavigator
+            tabBarShadowStyle={{height: 0}}
+            tabBarStyle={s.tabbar}>
+            <TabNavigator.Item
+              renderIcon={this.renderIcon.bind(null, 'times-circle')}
+              renderSelectedIcon={this.renderIcon.bind(null, 'times-circle')}
+              selected={false}
+              tabStyle={s.tabSide}
+              onPress={this.cancelButton}>
+            </TabNavigator.Item>
+            <TabNavigator.Item
+              renderIcon={this.renderIcon.bind(null, 'camera')}
+              renderSelectedIcon={this.renderIcon.bind(null, 'camera')} 
+              selected={true}
+              tabStyle={s.tabMain}
+              onPress={this.fromCamera}>
+              <View></View>
+            </TabNavigator.Item>
+            <TabNavigator.Item
+              renderIcon={this.renderIcon.bind(null, 'folder-open')}
+              renderSelectedIcon={this.renderIcon.bind(null, 'folder-open')} 
+              selected={false}
+              tabStyle={s.tabSide}
+              onPress={this.fromGallery}>
+            </TabNavigator.Item>
+          </TabNavigator>
+          <View style={s.border}></View>
+*/
 
 // https://console.aws.amazon.com/s3/home?region=us-west-2&bucket=zppiwo&prefix=media/
 // zppiwo

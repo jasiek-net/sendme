@@ -65,7 +65,12 @@ export class ModalHour extends Component {
     this.setState({date})
   }
   parseDate(date) {
-    return date.getHours() + ':' + date.getMinutes()
+    var hour = date.getHours().toString()
+    var minutes = date.getMinutes().toString() 
+    if (minutes.length === 1) {
+      minutes = '0' + minutes
+    }
+    return hour + ':' + minutes
   }
   save() {
     this.setState({open: false});

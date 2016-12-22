@@ -6,7 +6,9 @@ import * as inActions from './instagram/Actions'
 import * as gmActions from './gmail/Actions'
 import Social from './Social'
 
-const states = (type, icon) => (state, props) => ({
+const states = (type, icon) => (state, props) => {
+console.log('states ', props)
+    return ({
     icon,
     type,
 
@@ -18,6 +20,7 @@ const states = (type, icon) => (state, props) => ({
     
     nav: props.nav,
   })
+}
 
 export const Facebook = connect(
 	states("facebook", "facebook-square"),

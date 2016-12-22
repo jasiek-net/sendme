@@ -18,6 +18,7 @@ import {
   Instagram,
 } from './SocialFabric'
 
+import Main from './Main';
 import Photo from './Photo';
 import Settings from './Settings'
 import Friends from './Friends'
@@ -39,6 +40,9 @@ export default class Nav extends Component {
 
   renderScene(route, nav) {
     switch (route.name) {
+      case 'Main':
+        return <Main nav={nav} />
+
       case 'Facebook':
         return <Facebook nav={nav} />
 
@@ -68,15 +72,52 @@ export default class Nav extends Component {
      }
   }
 
+  configureScene(route, routeStack) {
+    switch (route.name) {
+      case 'Photo':
+        return Navigator.SceneConfigs.VerticalUpSwipeJump
+      case 'Main':
+        return Navigator.SceneConfigs.VerticalDownSwipeJump
+      default:
+        return Navigator.SceneConfigs.PushFromRight
+
+    // Navigator.SceneConfigs.PushFromRight (default)
+    // Navigator.SceneConfigs.FloatFromRight
+    // Navigator.SceneConfigs.FloatFromLeft
+    // Navigator.SceneConfigs.FloatFromBottom
+    // Navigator.SceneConfigs.FloatFromBottomAndroid
+    // Navigator.SceneConfigs.FadeAndroid
+    // Navigator.SceneConfigs.SwipeFromLeft
+    // Navigator.SceneConfigs.HorizontalSwipeJump
+    // Navigator.SceneConfigs.HorizontalSwipeJumpFromRight
+    // Navigator.SceneConfigs.HorizontalSwipeJumpFromLeft
+    // Navigator.SceneConfigs.VerticalUpSwipeJump
+    // Navigator.SceneConfigs.VerticalDownSwipeJump
+
+    }
+  }
+
   render() {
-    return (
+    if (this.props.hideNavBar) {
+      return (
         <Navigator
           ref='nav'
           style={{ flex: 1 }}
           initialRoute={{ name: this.props.name, title: this.props.name }}
           renderScene={ this.renderScene }
-          navigationBar={Navbar} />
+          configureScene={ this.configureScene } />
       );
+    } else {
+      return (
+        <Navigator
+          ref='nav'
+          style={{ flex: 1 }}
+          initialRoute={{ name: this.props.name, title: this.props.name }}
+          renderScene={ this.renderScene }
+          configureScene={ this.configureScene }
+          navigationBar={ Navbar } />
+      );
+    }
   }
 }
 
