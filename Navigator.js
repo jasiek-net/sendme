@@ -2,11 +2,13 @@
 
 import React, { Component } from 'react';
 import {
+  Image,
   Navigator,
   StyleSheet,
   TouchableHighlight,
   Text,
   WebView,
+  View,
 } from 'react-native';
 
 import { Button } from 'react-native-vector-icons/FontAwesome';
@@ -38,6 +40,11 @@ export default class Nav extends Component {
     this.refs.nav.popToTop();
   }
 
+
+  push(data) {
+    this.refs.nav.push(data)
+  }
+
   renderScene(route, nav) {
     switch (route.name) {
       case 'Main':
@@ -53,7 +60,8 @@ export default class Nav extends Component {
         return <Gmail nav={nav} />
 
       case 'Photo':
-        return (<Photo nav={nav} {...route.props} change={this.props.change} />)
+        return (<Photo nav={nav} {...route.props} />)
+
       case 'Settings':
         return (<Settings nav={nav} {...route.props} />)      
 
@@ -69,7 +77,13 @@ export default class Nav extends Component {
 
       case 'WebView':
         return (<WebView nav={nav} {...route.props} />)
-     }
+
+
+      case 'Empty':
+        return <View style={{flex: 1}} />
+      case 'Image':
+        return <Image {...route.props} />
+    }
   }
 
   configureScene(route, routeStack) {
@@ -102,7 +116,7 @@ export default class Nav extends Component {
       return (
         <Navigator
           ref='nav'
-          style={{ flex: 1 }}
+          style={{ flex: 1, position: 'relative' }}
           initialRoute={{ name: this.props.name, title: this.props.name }}
           renderScene={ this.renderScene }
           configureScene={ this.configureScene } />

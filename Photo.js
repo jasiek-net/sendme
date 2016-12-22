@@ -15,11 +15,16 @@ import ImagePicker from 'react-native-image-picker';
 // import Toast from '@remobile/react-native-toast';
 import Camera from 'react-native-camera';
 
+import Navigator from './Navigator'
+
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import {SIZ, COL, API, OUT} from './Global';
 // import {STR} from './Strings';
 // import Blur from './Blur';
+
+// props.nav <- main navigator to application
+// refs.nav <- navigator for photo flow (with hidden )
 
 export default class Photo extends Component {
 
@@ -27,68 +32,25 @@ export default class Photo extends Component {
     super(props);
     this.state = {
       send: false,
-      img: null,
+      img: false,
     }
-    // this.navigate = this.navigate.bind(this);
-    // this.sendPhoto = this.sendPhoto.bind(this);
+    this.pushImage = this.pushImage.bind(this);
+    this.pressCancel = this.pressCancel.bind(this);
+
     this.fromCamera = this.fromCamera.bind(this);
     this.fromGallery = this.fromGallery.bind(this);
-    // this.cancelButton = this.cancelButton.bind(this);
-    // this.waitForResult = this.waitForResult.bind(this);
   }
 
-  // waitForResult(jobId) {
-  //   fetch(API.JOB + "?jobId=" + jobId, {headers: API.HEADER})
-  //   .then(res => {
-  //     console.log(res);
-  //     console.log(res.status);
-  //     if (res.status === 202) {
-  //       setTimeout(this.waitForResult.bind(this, jobId), API.DELAY)
-  //     } else {
-  //       res.json().then(res => {
-  //         this.setState({waiting: false});
-  //         this.navigate(res);
-  //       });
-  //     }
-  //   })
-  //   .catch(err => {
-  //     console.log('Prediction error ', err)
-  //     this.setState({waiting: false});
-  //     Toast.showShortBottom(STR.network_error);
-  //   });
-  // }
-
-  // sendPhoto(uri, rotation = 0) {
-  //   this.setState({waiting: true});
-  //   ImageResizer.createResizedImage(uri, SIZ.newWidth, SIZ.newHeight, 'JPEG', 100, rotation)
-  //   .then(uri => {
-
-  //     var form = new FormData();
-  //     form.append('image', {uri: uri, type: 'image/jpg', name: 'image.jpg'});
-  //     form.append('Content-Type', 'multipart/formdata');
-
-  //     OUT(API.TIME, fetch(API.UPL, {
-  //       method: 'POST',
-  //       headers: API.HEADER,
-  //       body: form,
-  //     }))
-  //     .then(res => res.json())
-  //     .then(res => {
-  //       setTimeout(this.waitForResult.bind(this, res.jobId), API.DELAY)
-  //     })
-  //     .catch(err => {
-  //       console.log('Fetch error ', err)
-  //       this.setState({waiting: false});
-  //       Toast.showShortBottom(STR.network_error);
-  //     });
-  //   })
-  //   .catch(err => console.log('ImageResizer error ', err));
-  // }
-  
-  // cancelButton() {
-  //   if (this.state.waiting) return null;
-  //   this.props.change('home')
-  // }
+  pushImage(img) {
+    this.refs.nav.push({
+      name: 'Image',
+      props: {
+        source: {uri: img},
+        style: s.img,
+      }        
+    })
+    this.setState({img});
+  }
 
   fromGallery() {
     // if (this.state.waiting) return null;
@@ -97,30 +59,39 @@ export default class Photo extends Component {
       if (res.uri) {
         this.userImage = res.uri
         // this.sendPhoto(res.uri);
-        this.setState({img: this.userImage});
+        // this.setState({img: this.userImage});
+        this.pushImage(res.uri);
       }
     });
   }
 
   fromCamera() {
-    this.refs.camera.capture()
-    .then((data) => {
-      this.img = data.path;
-      // this.sendPhoto(data.path);
-      console.log('caputred photo')
-      console.log(this.img);
-
-      this.setState({img: this.img});
-    })
-    .catch(err => console.error("Error camer fromCamera() " + err));
+    if (this.state.img) {
+      console.log('send photo', this.state.img);
+    } else {    
+      this.refs.camera.capture()
+      .then(data => {
+        this.pushImage(data.path);
+      })
+      .catch(err => console.error("Error camer fromCamera() " + err));
+    }
   }
 
   renderIcon(name, color) {
     return (<Icon name={name} size={30} color={color ? color : COL.white} />);
   }
 
+  pressCancel() {
+    console.log('pressCancel');
+    if (this.state.img) {
+      this.refs.nav.popToTop()
+      this.setState({img: false});
+    } else {
+      this.props.nav.pop();
+    }
+  }
+
   render() {
-    // return <View style={{flex: 1, backgroundColor: 'black'}} />
     return (
       <Camera
         caputreAudio={false}
@@ -136,17 +107,22 @@ export default class Photo extends Component {
             <TabNavigator.Item
               tabStyle={s.tabSide}
               selected={false}
-              renderIcon={this.renderIcon.bind(null, 'times-circle')}
-              onPress={() => this.props.nav.pop()} />
+              renderIcon={
+                this.state.img ?
+                this.renderIcon.bind(null, 'arrow-circle-left') : 
+                this.renderIcon.bind(null, 'times-circle')}
+              onPress={this.pressCancel} />
             <TabNavigator.Item
               tabStyle={s.tabMain}
-              selected={this.state.img !== null}
-              renderIcon={this.renderIcon.bind(null, 'camera')}
-              renderSelectedIcon={this.renderIcon.bind(null, 'camera')}
+              selected={true}
+              renderSelectedIcon={
+                this.state.img ?
+                this.renderIcon.bind(null, 'paper-plane') : 
+                this.renderIcon.bind(null, 'camera')}
               onPress={this.fromCamera}>
-              <Image
-                style={s.img}
-                source={{uri: this.state.img}} />
+              <View style={s.all}>
+                <Navigator ref='nav' name='Empty' hideNavBar={true} />
+              </View>
             </TabNavigator.Item>
             <TabNavigator.Item
               tabStyle={s.tabSide}
@@ -155,60 +131,6 @@ export default class Photo extends Component {
               onPress={this.fromGallery} />
           </TabNavigator>
 
-
-
-          <View style={{
-            height: 140,
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            // backgroundColor: 'green',
-            position: 'absolute',
-            left: 30,
-            right: 30,
-            bottom: 44,
-          }}>
-            <TouchableOpacity style={s.btn} onPress={this.props.nav.pop}>
-              <Icon
-                name='times-circle'
-                size={60}
-                color={COL.white}
-                backgroundColor='transparent' />
-              <Text style={{
-                borderWidth: 2,
-                borderColor: COL.white,
-                padding: 3,
-                fontSize: 10,
-                fontWeight: 'bold',
-                textAlign: 'center',
-                color: COL.white,
-                width: 60,
-                margin: 5,
-                borderRadius: 4,
-              }}>
-                CANCEL                
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={s.btn}>
-              <Icon
-                name='paper-plane'
-                size={60}
-                color={COL.white}
-                backgroundColor='transparent'/>
-              <Text style={{
-                borderWidth: 1,
-                borderColor: COL.white,
-                padding: 3,
-                fontSize: 10,
-                textAlign: 'center',
-                color: COL.white,
-                width: 60,
-                margin: 5,
-                borderRadius: 3,
-              }}>
-                SEND                
-              </Text>
-            </TouchableOpacity>
-          </View>
 
 
 
@@ -230,6 +152,14 @@ const PhotoButton = ({
 
 
 const s = StyleSheet.create({
+  all: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'transparent',
+  },
   btn: {
     flexDirection: 'column',
     // justifyContent: 'center',
@@ -254,14 +184,14 @@ const s = StyleSheet.create({
     borderRadius: 5,
     borderBottomLeftRadius: 0,
     borderBottomRightRadius: 0,
-    borderColor: COL.green,
+    borderColor: COL.white,
     borderWidth: 1,
     borderBottomWidth: 0,
     // backgroundColor: COL.black,
   },
   tabSide: {
     flex: 2,
-    borderColor: COL.green,
+    borderColor: COL.white,
     borderTopWidth: 1,
   },
 });

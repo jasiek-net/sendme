@@ -28,6 +28,7 @@ export default class Main extends Component {
     if (state !== 'Photo') {
       this.setState({tab: state})
     } else {
+      console.log('press Photo')
       this.props.nav.push({
         name: 'Photo',
       })
@@ -63,8 +64,7 @@ export default class Main extends Component {
             </TabNavigator.Item>
             <TabNavigator.Item
               renderIcon={this.renderIcon.bind(null, 'camera')}
-              renderSelectedIcon={this.renderIcon.bind(null, 'camera', COL.green)}
-              selected={this.state.tab === 'never gonna happend'}
+              selected={false}
               tabStyle={styles.tabMain}
               onPress={() => this.change('Photo')}>
               <View></View>
