@@ -9,6 +9,7 @@
   "dependencies": {
     "base-64": "^0.1.0",
     "expect": "^1.20.2",
+    "mailcomposer": "^4.0.0",
     "react": "^15.4.0",
     "react-native": "^0.38.0",
     "react-native-accordion": "^1.0.1",

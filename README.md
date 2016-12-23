@@ -33,7 +33,9 @@ store = {
 #### BUGS & FIXES
 - I changed in Collapsible.js overflow to 'scroll' in render() https://github.com/oblador/react-native-collapsible/issues/51 
 
+
 #### REFACTOR
+- [ ] why boom when 3 times go to photo and back?
 - [ ] Info.plist: SendMe needs access to the photo library, to send pictures
 - [ ] Info.plist: SendMe needs access to the camera, to take pictures
 - [ ] split reducers to several files

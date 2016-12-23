@@ -26,6 +26,8 @@ import {SIZ, COL, API, OUT} from './Global';
 // props.nav <- main navigator to application
 // refs.nav <- navigator for photo flow (with hidden )
 
+import { sendPhoto } from './Sender';
+
 export default class Photo extends Component {
 
   constructor(props) {
@@ -42,6 +44,7 @@ export default class Photo extends Component {
   }
 
   pushImage(img) {
+    console.log('image url ', img);
     this.refs.nav.push({
       name: 'Image',
       props: {
@@ -68,6 +71,7 @@ export default class Photo extends Component {
   fromCamera() {
     if (this.state.img) {
       console.log('send photo', this.state.img);
+      sendPhoto(this.state.img);
     } else {    
       this.refs.camera.capture()
       .then(data => {

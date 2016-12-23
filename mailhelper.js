@@ -199,7 +199,6 @@ export default class MailHelper {
   static mailBody(img, ema) {
   	var emails = ema.map(e => { return e.id });
   	var boundary = Date.now()
-
     return encode(
       "MIME-Version: 1.0\n" +
       "Subject: photo\n" +

@@ -11,7 +11,8 @@ const FB_URL = 'https://graph.facebook.com/';
 const IN_URL = 'https://api.instagram.com/v1/';
 const GM_URL = '';
 
-export const GM_CLIENT_ID = '725209563882-v025p7u4cl84iplutoo4n0q51nnsbkoi.apps.googleusercontent.com'
+const GM_CLIENT = '725209563882-v025p7u4cl84iplutoo4n0q51nnsbkoi.apps.googleusercontent.com'
+const GM_API_KEY = 'AIzaSyBtvxzYHQFuJ3dnlCR9VHMkJrfU8QgRkSk';
 
 const IN_CLIENT_ID = 'a5b9ac8e834a4a11ba1738cf9b7c2269';
 const IN_REDIRECT_URI = 'http://iga5b9ac8e834a4a11ba1738cf9b7c2269.sendme';
@@ -35,7 +36,11 @@ export const API = {
   IN_LOGOUT: 'https://instagram.com/accounts/logout',
   IN_FIRST: 'first',
 
-  GM_CLIENT: '725209563882-v025p7u4cl84iplutoo4n0q51nnsbkoi.apps.googleusercontent.com',
+  GM_CLIENT: GM_CLIENT,
+  GM_API_KEY: GM_API_KEY,
+
+  GM_SEND: (user) => `https://www.googleapis.com/gmail/v1/` + 
+    `users/${user}/messages/send?key=${GM_API_KEY}?uploadType=multipart`
 }
 
 export const COL = {
