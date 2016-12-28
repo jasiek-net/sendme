@@ -18,7 +18,7 @@ const Empty = () => (
   }}>
     <ActivityIndicator
       color={COL.green}
-      size={'large'}
+      size='large'
     />
 	</View>
 );

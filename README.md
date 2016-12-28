@@ -15,23 +15,10 @@ alias zoome="and_emu & cd ~/zoome && and_rea & npm start"
 alias and_log="react-native log-android"
 ```
 
-store = {
-	
-
-	settings: {
-		emails: [
-			{
-				data: 'jan@horubala.pl',
-				id: 12234238239323
-			}
-		]
-	}
-}
-
-
-
 #### BUGS & FIXES
 - I changed in Collapsible.js overflow to 'scroll' in render() https://github.com/oblador/react-native-collapsible/issues/51 
+
+
 
 
 #### REFACTOR
@@ -43,6 +30,7 @@ store = {
 - [ ] move ModalHour and ModalEmail to one component, extract input and datepicker with one methods: onChange
 - [ ] fixed gmail login on first view
 - [ ] there are about 6-7 instances of Navigator in app, can we reduce to have only one? how works tabbar with navigator?
+- [ ] improve cancel sending photo (cancel didn't cancel sending, only move back to camera)
 
 
 

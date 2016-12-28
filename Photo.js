@@ -2,6 +2,8 @@
 
 import React, {Component} from 'react';
 import {
+  ActivityIndicator,
+  Alert,
   Image,
   TouchableOpacity,
   Text,
@@ -12,6 +14,8 @@ import {
 // import ImageResizer from 'react-native-image-resizer';
 import TabNavigator from 'react-native-tab-navigator';
 import ImagePicker from 'react-native-image-picker';
+import { BlurView } from 'react-native-blur';
+
 // import Toast from '@remobile/react-native-toast';
 import Camera from 'react-native-camera';
 
@@ -33,14 +37,24 @@ export default class Photo extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      wait: false,
       send: false,
       img: false,
     }
     this.pushImage = this.pushImage.bind(this);
     this.pressCancel = this.pressCancel.bind(this);
 
+    this.sendPhoto = this.sendPhoto.bind(this);
+    this.mainButton = this.mainButton.bind(this);
+
     this.fromCamera = this.fromCamera.bind(this);
     this.fromGallery = this.fromGallery.bind(this);
+
+    this.onSendError = this.onSendError.bind(this);
+    this.onSendCancel = this.onSendCancel.bind(this);
+    this.onSendSuccess = this.onSendSuccess.bind(this);
+
+    this.backToCamera = this.backToCamera.bind(this);
   }
 
   pushImage(img) {
@@ -56,7 +70,7 @@ export default class Photo extends Component {
   }
 
   fromGallery() {
-    // if (this.state.waiting) return null;
+    if (this.state.wait) return;
     let options = {mediaType: 'photo'}
     ImagePicker.launchImageLibrary(options, (res)  => {
       if (res.uri) {
@@ -69,15 +83,94 @@ export default class Photo extends Component {
   }
 
   fromCamera() {
+    this.refs.camera.capture()
+    .then(data => {
+      this.pushImage(data.path);
+    })
+    .catch(err => console.log('Error camera', err));
+  }
+
+  sendPhoto() {
+    console.log('send photo', this.state.img);
+    this.setState({wait: true})
+    // setTimeout(this.onSendError, 2000)
+    sendPhoto(this.state.img)
+    .then(this.onSendSuccess)
+    .catch(this.onSendError);
+  }
+
+  onSendError() {
+    Alert.alert(
+      'Error while sending',
+      'An error occurred while sending photo!',
+      [
+        {
+          text: 'Skip',
+          onPress: this.backToCamera
+        },
+        {
+          text: 'Try again',
+          onPress: this.sendPhoto
+        }
+      ]
+    )
+  }
+
+  onSendSuccess() {
+    Alert.alert(
+      'Photo sent!',
+      'Your photo has been sent successfully!',
+      [
+        {
+          text: 'OK',
+          onPress: this.backToCamera,
+        },
+      ]
+    )
+  }
+
+  onSendCancel() {
+    Alert.alert(
+      'Cancel sending',
+      'Do you want to cancel sending?',
+      [
+        {
+          text: 'No',
+        },
+        {
+          text: 'Yes',
+          onPress: this.backToCamera
+        }
+      ]
+    )
+  }
+
+
+  backToCamera() {
+    this.refs.nav.popToTop()
+    this.setState({
+      img: false,
+      wait: false,
+    });    
+  }
+
+  mainButton() {
+    if (this.state.wait) return;
     if (this.state.img) {
-      console.log('send photo', this.state.img);
-      sendPhoto(this.state.img);
-    } else {    
-      this.refs.camera.capture()
-      .then(data => {
-        this.pushImage(data.path);
-      })
-      .catch(err => console.error("Error camer fromCamera() " + err));
+      this.sendPhoto()
+    } else {
+      this.fromCamera()
+    }
+  }
+
+
+  pressCancel() {
+    if (this.state.wait) {
+      this.onSendCancel();
+    } else if (this.state.img) {
+      this.backToCamera();
+    } else {
+      this.props.nav.pop();
     }
   }
 
@@ -85,17 +178,15 @@ export default class Photo extends Component {
     return (<Icon name={name} size={30} color={color ? color : COL.white} />);
   }
 
-  pressCancel() {
-    console.log('pressCancel');
-    if (this.state.img) {
-      this.refs.nav.popToTop()
-      this.setState({img: false});
-    } else {
-      this.props.nav.pop();
-    }
-  }
-
   render() {
+    var mainButton;
+    if (this.state.img === false) {
+      mainButton = this.renderIcon.bind(null, 'camera')
+    } else if (this.state.wait === false) {
+      mainButton = this.renderIcon.bind(null, 'paper-plane')
+    } else {
+      mainButton = () => (<ActivityIndicator color='white' size='large' style={{marginTop: 20}} />)
+    }
     return (
       <Camera
         caputreAudio={false}
@@ -104,7 +195,6 @@ export default class Photo extends Component {
         ref="camera"
         style={{flex: 1, position: 'relative'}}>
 
-
         <TabNavigator
           tabBarStyle={s.tabbar}
           tabBarShadowStyle={{height: 0}}>
@@ -112,20 +202,18 @@ export default class Photo extends Component {
               tabStyle={s.tabSide}
               selected={false}
               renderIcon={
-                this.state.img ?
+                this.state.img && this.state.wait === false ?
                 this.renderIcon.bind(null, 'arrow-circle-left') : 
                 this.renderIcon.bind(null, 'times-circle')}
               onPress={this.pressCancel} />
             <TabNavigator.Item
               tabStyle={s.tabMain}
               selected={true}
-              renderSelectedIcon={
-                this.state.img ?
-                this.renderIcon.bind(null, 'paper-plane') : 
-                this.renderIcon.bind(null, 'camera')}
-              onPress={this.fromCamera}>
+              renderSelectedIcon={mainButton}
+              onPress={this.mainButton}>
               <View style={s.all}>
                 <Navigator ref='nav' name='Empty' hideNavBar={true} />
+                {this.state.wait ? <BlurView blurType='dark' style={s.blur}/> : null}
               </View>
             </TabNavigator.Item>
             <TabNavigator.Item
@@ -197,6 +285,16 @@ const s = StyleSheet.create({
     flex: 2,
     borderColor: COL.white,
     borderTopWidth: 1,
+  },
+  blur: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
   },
 });
 

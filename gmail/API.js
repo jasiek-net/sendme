@@ -22,11 +22,7 @@ const parseFriends = (res) =>
 export const login = () =>
 	new Promise((res, rej) =>
 		GoogleSignin.hasPlayServices({ autoResolve: true }).then(() => {
-			GoogleSignin.configure({
-				scopes: ["https://www.googleapis.com/auth/gmail.send"],
-				offlineAccess: false,
-				iosClientId: API.GM_CLIENT,
-			})
+			GoogleSignin.configure(API.GM_CONFIG)
 			.then(() => {
 				GoogleSignin.signIn()
 				.then(usr => {
@@ -44,7 +40,7 @@ export const logout = () => GoogleSignin.signOut()
 
 export const fetchUser = () =>
 	new Promise((res, rej) =>
-		GoogleSignin.configure({ iosClientId: API.GM_CLIENT })
+		GoogleSignin.configure(API.GM_CONFIG)
 		.then(() => {
 			GoogleSignin.currentUserAsync()
 			.then(usr => {

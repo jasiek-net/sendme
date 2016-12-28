@@ -40,7 +40,13 @@ export const API = {
   GM_API_KEY: GM_API_KEY,
 
   GM_SEND: (user) => `https://www.googleapis.com/gmail/v1/` + 
-    `users/${user}/messages/send?key=${GM_API_KEY}?uploadType=multipart`
+    `users/${user}/messages/send?key=${GM_API_KEY}?uploadType=multipart`,
+
+  GM_CONFIG: {
+    scopes: ["https://www.googleapis.com/auth/gmail.send"],
+    offlineAccess: false,
+    iosClientId: GM_CLIENT,
+  },
 }
 
 export const COL = {

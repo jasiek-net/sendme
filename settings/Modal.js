@@ -82,7 +82,7 @@ export class ModalHour extends Component {
       <Modal
         open={this.state.open}
         closeOnTouchOutside={true}>
-        <Text style={s.head}>Set hour of sending photos!</Text>
+        <Text style={s.head}>Add hour of sending photos!</Text>
         <DatePickerIOS
           date={this.state.date}
           mode="time"

@@ -4,6 +4,7 @@ import android.app.Application;
 import android.util.Log;
 
 import com.facebook.react.ReactApplication;
+import com.cmcewen.blurview.BlurViewPackage;
 import com.imagepicker.ImagePickerPackage;
 import com.lwansbrough.RCTCamera.RCTCameraPackage;
 import com.remobile.datetimepicker.RCTDateTimePickerPackage;
@@ -52,6 +53,7 @@ public class MainApplication extends Application implements ReactApplication {
       return Arrays.<ReactPackage>asList(
         new RNFetchBlobPackage(),
         new MainReactPackage(),
+            new BlurViewPackage(),
             new ImagePickerPackage(),
             new RCTCameraPackage(),
             new RCTDateTimePickerPackage(),

@@ -6,7 +6,7 @@ import Navigator from './Navigator'
 
 const Root = ({ store }) => (
   <Provider store={store}>
-    <Navigator name="Photo" hideNavBar={true} />
+    <Navigator name="Main" hideNavBar={true} />
   </Provider>
 )
 

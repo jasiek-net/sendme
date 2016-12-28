@@ -20,7 +20,7 @@ export default class Main extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {tab: 'Facebook'}
+    this.state = {tab: 'Settings'}
     this.change = this.change.bind(this);
   }
 

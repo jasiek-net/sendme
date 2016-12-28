@@ -28,6 +28,9 @@ class Settings extends Component {
     this.state = {sync: false}
     this.sync = this.sync.bind(this);
     this.remove = this.remove.bind(this);
+    this.removeEmail = this.removeEmail.bind(this);
+    this.removeHour = this.removeHour.bind(this);
+    console.log(props);
   }
 
   componentDidMount() {
@@ -39,23 +42,23 @@ class Settings extends Component {
     setTimeout(() => this.setState({sync: false}), 2000);
   }
 
-  remove(type, a) {
+  remove(text, call) {
     Alert.alert(
-      `Removing ${a.data}`,
-      `Are you sure you want to remove ${a.data}?`,
+      `Removing ${text}`,
+      `Are you sure you want to remove ${text}?`,
       [
-        { text: 'Yes', onPress: () => {
-            if (type === 'emails') {
-              this.props.removeEmail(a.id)
-            }
-            if (type === 'hours') {
-              this.props.removeHour(a.id)
-            }
-          }
-        },
+        { text: 'Yes', onPress: call},
         { text: 'No' }
       ]
     )
+  }
+
+  removeEmail(a) {
+    this.remove(a.data, this.props.removeEmail.bind(null, a.id))
+  }
+
+  removeHour(a) {
+    this.remove(a.data, this.props.removeHour.bind(null, a.id))
   }
 
   render() {
@@ -81,20 +84,18 @@ class Settings extends Component {
         }
       />
       <Collapsible
-        type='emails'
         text='Emails of recipients'
         icon='envelope-o'
         list={this.props.emails}
         add={() => this.refs.emails.open()}
-        remove={this.remove}
+        remove={this.removeEmail}
       />
       <Collapsible
-        type='hours'
         text='Time of sending'
         icon='clock-o'
         list={this.props.hours}
         add={() => this.refs.hours.open()}
-        remove={this.remove}
+        remove={this.removeHour}
       />
     </ScrollView>
     <ModalEmail
@@ -112,7 +113,7 @@ const state = (state) => ({
   emails: state.settings.emails,
 })
 
-const dispatch = (type) => (dispatch) => ({
+const dispatch = (dispatch) => ({
   addEmail: (email) => dispatch({
     type: 'ADD_EMAIL',
     data: email,
@@ -131,8 +132,4 @@ const dispatch = (type) => (dispatch) => ({
   })
 })
 
-
-export default connect(
-  state,
-  dispatch
-)(Settings)
+export default connect(state, dispatch)(Settings)

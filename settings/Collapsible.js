@@ -25,7 +25,8 @@ export default class CustomCollapsible extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {collapse: true};
+    this.state = {collapsed: true};
+    console.log('Collapsible ', props)
   }
 
   render() {
@@ -34,16 +35,16 @@ export default class CustomCollapsible extends Component {
         <MenuButton
           text={this.props.text}
           iconLeft={this.props.icon}
-          call={() => this.setState({collapse: !this.state.collapse})}
-          iconRight={this.state.collapse ? 'angle-down' : 'angle-up'}
+          call={() => this.setState({collapsed: !this.state.collapsed})}
+          iconRight={this.state.collapsed ? 'angle-down' : 'angle-up'}
         />
-        <Collapsible collapsed={this.state.collapse} align="center">
+        <Collapsible collapsed={this.state.collapsed} align="center">
           {this.props.list.map(a => (
             <RenderRow
               key={a.id}
               btn='REMOVE'
               text={a.data}
-              call={this.props.remove.bind(null, this.props.type, a)}
+              call={() => this.props.remove(a)}
             />
           ))}
           <FootButton
@@ -54,4 +55,12 @@ export default class CustomCollapsible extends Component {
       </View>
     )
   }
+}
+
+CustomCollapsible.propTypes = {
+  text: PropTypes.string.isRequired,
+  icon: PropTypes.string.isRequired,
+  list: PropTypes.array.isRequired,
+  add: PropTypes.func.isRequired,
+  remove: PropTypes.func.isRequired,
 }

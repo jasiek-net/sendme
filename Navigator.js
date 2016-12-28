@@ -89,24 +89,21 @@ export default class Nav extends Component {
   configureScene(route, routeStack) {
     switch (route.name) {
       case 'Photo':
-        return Navigator.SceneConfigs.VerticalUpSwipeJump
-      case 'Main':
-        return Navigator.SceneConfigs.VerticalDownSwipeJump
+        return Navigator.SceneConfigs.FloatFromBottom
       default:
         return Navigator.SceneConfigs.PushFromRight
 
-    // Navigator.SceneConfigs.PushFromRight (default)
-    // Navigator.SceneConfigs.FloatFromRight
-    // Navigator.SceneConfigs.FloatFromLeft
-    // Navigator.SceneConfigs.FloatFromBottom
-    // Navigator.SceneConfigs.FloatFromBottomAndroid
-    // Navigator.SceneConfigs.FadeAndroid
-    // Navigator.SceneConfigs.SwipeFromLeft
-    // Navigator.SceneConfigs.HorizontalSwipeJump
-    // Navigator.SceneConfigs.HorizontalSwipeJumpFromRight
-    // Navigator.SceneConfigs.HorizontalSwipeJumpFromLeft
-    // Navigator.SceneConfigs.VerticalUpSwipeJump
-    // Navigator.SceneConfigs.VerticalDownSwipeJump
+    // return Navigator.SceneConfigs.PushFromRight (default)
+    // return Navigator.SceneConfigs.FloatFromRight
+    // return Navigator.SceneConfigs.FloatFromLeft
+    // return Navigator.SceneConfigs.FloatFromBottomAndroid
+    // return Navigator.SceneConfigs.FadeAndroid
+    // return Navigator.SceneConfigs.SwipeFromLeft
+    // return Navigator.SceneConfigs.HorizontalSwipeJump
+    // return Navigator.SceneConfigs.HorizontalSwipeJumpFromRight
+    // return Navigator.SceneConfigs.HorizontalSwipeJumpFromLeft
+    // return Navigator.SceneConfigs.VerticalUpSwipeJump
+    // return Navigator.SceneConfigs.VerticalDownSwipeJump
 
     }
   }
