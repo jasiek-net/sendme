@@ -35,17 +35,19 @@ alias and_log="react-native log-android"
 
 
 #### TODO
-- [ ] iOS: try to set specific hours for background tasks, [tutorial](https://possiblemobile.com/2013/09/ios-7-background-fetch/)
-- [ ] iOS: trigger fetch every 15 minutes, check for hours in async storage
 - [ ] check why gmail is losing sended emails
 - [ ] Android: find framework for background tasks/background fetch (workers, alarmmanager, timer, etc.)
 - [ ] Android: test background fetch
 - [ ] check if instagram pagination works (need more friends)
 - [ ] [rethink react](https://facebook.github.io/react/docs/thinking-in-react.html) one more time 
-- [ ] move elements to partials, make higher abstractions
 - [ ] find some better abstractions for facebook & instagram reducers
-- [ ] module with camera and gallery
-- [ ] implement photo module
+- [ ] iOS: try to set specific hours for background tasks, [tutorial](https://possiblemobile.com/2013/09/ios-7-background-fetch/)
+- [ ] iOS: implement background task mechanism
+- [ ] iOS: trigger fetch every 15 minutes, check for hours in async storage
+- [ ] sending photos to users (from insta, fb) to provided emails with titles!
+- [x] move elements to partials, make higher abstractions
+- [x] module with camera and gallery
+- [x] implement photo module
 - [x] implement settings logic (actions)
 - [x] implement settings view
 - [x] code recomposition: move Reducers (in some abstraction) to subfolders facebook/, instagram/

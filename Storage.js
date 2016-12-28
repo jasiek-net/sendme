@@ -43,34 +43,8 @@ export const pureState = () => {
       user: null,
     },
     settings: {
-      emails: [
-        {
-          data: 'jan.horubala@gmail.com',
-          id: 1,
-        },
-        {
-          data: 'ola.dolot@op.pl',
-          id: 2,
-        },
-        {
-          data: 'franciszek@mixbox.pl',
-          id: 3,
-        }
-      ],
-      hours: [
-        {
-          data: '12:30',
-          id: 1,
-        },
-        {
-          data: '13:45',
-          id: 2,
-        },
-        {
-          data: '15:35',
-          id: 3,
-        }
-      ]
+      emails: [],
+      hours: []
     }
   }
   return state;

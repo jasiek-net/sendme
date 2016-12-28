@@ -23,11 +23,16 @@ export const API = {
 	IN: IN_URL,
 	GM: GM_URL,
 
-	FB_friends: FB_URL + 'me/friends?fields=name,id,picture,email&limit=1&access_token=nometterwhat', // limit=1
 	IN_friends: IN_URL + 'users/self/follows?access_token=', // count=2
+  IN_user: IN_URL + 'users/self?access_token=',
+
 
   FB_user: FB_URL + 'me?fields=name,email,picture.type(large)&access_token=',
-  IN_user: IN_URL + 'users/self?access_token=',
+  FB_friends: FB_URL + 'me/friends?fields=name,id,picture,email&access_token=nometterwhat', // limit=1
+
+  FB_PHOTO: (token, user, last) =>
+    FB_URL  + `${user}/photos?fields=images,created_time,name`
+            + `&type=uploaded&access_token=${token}`,//&since=${last}`,
 
   IN_LOGIN: `https://api.instagram.com/oauth/authorize/` + 
             `?client_id=${ IN_CLIENT_ID }&redirect_uri=${ IN_REDIRECT_URI }` +

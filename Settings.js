@@ -21,6 +21,10 @@ import Collapsible from './settings/Collapsible';
 import { ModalEmail, ModalHour } from './settings/Modal';
 import { MenuButton } from './Partials';
 
+import {
+  sendAllPhotos
+} from './Sender';
+
 class Settings extends Component {
   
   constructor(props) {
@@ -39,7 +43,12 @@ class Settings extends Component {
 
   sync() {
     this.setState({sync: true})
-    setTimeout(() => this.setState({sync: false}), 2000);
+    sendAllPhotos()
+    .then(() => this.setState({sync: false}))
+    .catch(err => {
+      Alert.alert('Error!!!', 'nonewodnweo')
+      console.log('error sending', err)
+    });
   }
 
   remove(text, call) {
